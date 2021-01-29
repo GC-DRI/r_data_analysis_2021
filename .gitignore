@@ -1,0 +1,7 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+00_acquire_spotify_data.Rmd
+00_acquire_spotify_data.html
+.httr-oauth

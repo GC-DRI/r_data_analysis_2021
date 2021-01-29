@@ -1,0 +1,117 @@
+---
+title: "R for Data Analysis"
+output: github_document
+---
+
+[Next >>>](02_isolating-data.md)
+
+## Welcome
+The layout and much of the content in this tutorial borrows from [RStudio Primers](https://rstudio.cloud/learn/primers), and the `spotify` data is modified from [this kaggle data set](https://www.kaggle.com/zaheenhamidani/ultimate-spotify-tracks-db). I would highly recommend exploring [RStudio Primers](https://rstudio.cloud/learn/primers) as they are a great resource for learning basic and intermediate R concepts!
+
+In this case study, you will explore qualities of your favorite music genres. Along the way, you will master some of the most useful functions for isolating and summarizing variables, cases, and values within a data frame:
+
+* `select()` and `filter()`, which let you extract columns and rows from a data frame
+* `arrange()`, which lets you reorder the rows in your data
+* `%>%`, which organizes your code into reader-friendly "pipes"
+* `group_by()`, which lets you group your data by a factor
+* `summarize()`, which lets you perform a function on your grouped data
+
+This tutorial uses the [core tidyverse packages](http://tidyverse.org/), including ```ggplot2```, ```tibble```, and ```dplyr```. 
+
+
+## Music
+
+First, let's load the tidyverse suite of packages. 
+```{r spotify, echo = TRUE, message = FALSE, warning = FALSE}
+library(tidyverse)
+```
+
+### Spotify data
+
+Now you need to read in your Spotify data. We'll use the ```read_csv``` function for this.
+
+```{r}
+spotify <- read_csv("data/spotify.csv")
+```
+
+Let's take a look at the data set. I will demonstrate two ways to do this. The first is just to print the data set to the screen. 
+
+```{r echo = TRUE}
+spotify
+```
+
+Although  get a full look at the data, I use the `View()` function from base R. This displays your data frame in a spreadsheet-like format that has basic sorting functionality. Let's try that!
+
+```{r, eval=FALSE}
+View(spotify)
+```
+
+
+### Trends in your favorite music
+
+You can use the provided `spotify` data to learn more about your favorite music genres. For instance, which of your favorite musical genres will pep you up the most?
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, out.width = "70%"}
+spotify %>% 
+  dplyr::filter(genre == str_match(genre, pattern = "Ska|Rock|Rap|Indie|Jazz|Classical")) %>% 
+  group_by(genre) %>% 
+  summarize_if(is.numeric, mean) %>% 
+  mutate(genre = fct_reorder(genre, energy)) %>% 
+  ggplot(aes(x = genre, y = energy)) +
+  geom_col() +
+  labs(title = "Which musical genre has the most energy?", 
+       x = "Genre",
+       y = "Energy") +
+  coord_flip() +
+  theme_minimal() +
+  theme(text = element_text(size = 14))
+```
+
+But before you do, you will need to trim down `spotify`. At the moment, there are more rows in `spotify` than you need to build your plot. 
+
+### An example
+
+To see what I mean, consider how I made the plot above: I began with the entire data set, which if I plotted everything as a scatterplot would've looked like this. This is a big jumbled mess. It doesn't tell me much about what I'm interested in.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, out.width = "60%", cached = TRUE}
+spotify %>% 
+  ggplot(aes(x = genre, y = energy)) +
+  geom_point() +
+  labs(title = "Which musical genre has the most energy?", 
+       x = "Genre",
+       y = "Energy") +
+  coord_flip() +
+  theme_minimal() +
+  theme(text = element_text(size = 12))
+```
+
+I then narrowed the data to just the rows that contain my selected genres. Here's how the rows with just the genres I'm interested in look as a scatterplot.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE,  out.width = "60%", cached = TRUE}
+spotify %>% 
+  dplyr::filter(genre == str_match(genre, pattern = "Ska|Rock|Rap|Indie|Jazz|Classical")) %>% 
+  ggplot(aes(x = genre, y = energy)) +
+  geom_point() +
+  labs(title = "Which musical genre has the most energy?", 
+       x = "Genre",
+       y = "Energy") +
+  coord_flip() +
+  theme_minimal() +
+  theme(text = element_text(size = 12))
+```
+
+This tells me a little bit more about the data, but I'm really just interested in the average. This leads us back to my first plot, which shows the average energy for each genre.
+
+Your goal in this workshop is to repeat this process for your own genres. Along the way, you will learn a set of functions that isolate and summarize information within a data set. 
+
+### Sections
+
+1) [Isolating data](02_isolating-data.md)  
+2) [Piping](03_piping.md)  
+3) [Summarizing data](04_summarizing-data.md)  
+
+
+-----
+
+[Next >>>](02_isolating-data.md)  
+

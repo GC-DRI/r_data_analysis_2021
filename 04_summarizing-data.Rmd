@@ -1,0 +1,193 @@
+---
+title: "Summarizing data"
+output: github_document
+---
+
+```{r, results='hide', echo = FALSE, warning=FALSE, message=FALSE}
+library(tidyverse)
+```
+
+```{r, results='hide', echo = FALSE, warning=FALSE, message=FALSE}
+spotify <- read_csv("data/spotify.csv")
+```
+
+[<<< Previous](03_piping.md)
+
+-----
+
+## summarise()
+
+![Source: dplyr cheatsheet][6]
+
+[6]: images/summarise.png
+
+Every data frame that you meet implies more information than it displays. For example, `spotify` does not display the average energy of a genre, but `spotify` certainly implies what that number is. To discover the number, you only need to do a calculation:
+
+```{r echo = TRUE}
+spotify %>% 
+  filter(genre == "Rock") %>% 
+  summarise(avg_energy = mean(energy))
+```
+
+`summarise()` takes a data frame and uses it to calculate a new data frame of summary statistics. 
+
+### Syntax
+
+To use `summarise()`, pass it a data frame and then one or more named arguments. Each named argument should be set to an R expression that generates a single value. Summarise will turn each named argument into a column in the new data frame. The name of each argument will become the column name, and the value returned by the argument will become the column contents.
+
+### Example
+
+I used `summarise()` above to calculate the average energy of songs in the "Rock" genre, but let's expand that code to also calculate 
+
+* `max` - the rock song with the most energy 
+* `sum` - the total energy of all rock songs in the data set
+
+```{r echo = TRUE}
+spotify %>%
+  filter(genre == "Rock") %>%
+  summarise(
+    avg_energy = mean(energy),
+    max_energy = max(energy),
+    total_energy = sum(energy)
+  )
+```
+
+Wow. Look at that efficient use of pipes (`%>%`) AND `summarise()`!
+
+**Exercise 1**
+
+Compute these three statistics:
+
+* the average loudness of blues songs (`mean()`)
+* the maximum danceability of any blues song (`max()`)
+* the minimum energy of any blues song (`min()`)
+
+Remember, you will have to use `filter()` to filter for blues songs!
+
+-----
+
+### summarise by groups?
+
+How can we apply `summarise()` to find the average energy for each genre in `spotify`? You've seen how to calculate the average energy of a genre, which gives us the answer for a single genre of interest:
+
+```{r}
+spotify %>% 
+  filter(genre == "Blues") %>% 
+  summarise(avg_energy = mean(energy))
+```
+
+However, we had to isolate the genre from the rest of the data to calculate this number. You could imagine writing a program that goes through each genre one at a time and: 
+
+1. filters out the rows with just that genre
+2. applies summarise to the rows
+
+Eventually, the program could combine all of the results back into a single data set. However, you don't need to write such a program; this is the job of dplyr's `group_by()` function.
+
+## group_by()
+
+![Source: dplyr cheatsheet][7]
+
+[7]: images/group_by_1.png
+
+`group_by()` takes a data frame and then the names of one or more columns in the data frame. It returns a copy of the data frame that has been "grouped" into sets of rows that share identical combinations of values in the specified columns. 
+
+### group_by() in action
+
+For example, the result below is grouped into rows that have the same genre.
+
+```{r echo = TRUE}
+spotify %>%
+  group_by(genre)
+```
+
+### Using group_by()
+
+![Source: dplyr cheatsheet][8]
+
+[8]: images/group_by_2.png
+
+By itself, `group_by()` doesn't do much. It assigns grouping criteria that is stored as metadata alongside the original data set. If your dataset is a tibble, as above, R will tell you that the data is grouped at the top of the tibble display. In all other aspects, the data looks the same.
+
+However, when you apply a dplyr function like `summarise()` to grouped data, dplyr will execute the function in a groupwise manner. Instead of computing a single summary for the entire data set, dplyr will compute individual summaries for each group and return them as a single data frame. The data frame will contain the summary columns as well as the columns in the grouping criteria, which makes the result decipherable:
+
+```{r}
+spotify %>%
+  group_by(genre) %>% 
+  summarise(min_loud = min(loudness))
+```
+
+To understand exactly what `group_by()` is doing, remove the line `group_by(genre) %>%` from the code above and rerun it. How do the results change?
+
+**Exercise 2**
+How would you go about finding the 
+
+### Go further
+The `mutate()` function is another highly useful tool for extracting unseen insights from your dataframe. While `select()` allows you to choose columns and `group_by()` allows you to summarise rows, `mutate()` enables you to perform calculations and other manipulations on all data within a column. For instance, you're able perform arithmetic on numeric columns or create a new column that is a combination of two existing columns. For a light introduction, [check this out](https://dplyr.tidyverse.org/reference/mutate.html). 
+
+## Put it all together
+
+**
+Woo! You now have the tools necessary to answer our original question: Which of your favorite music genres will pep you up the most? To answer this question, you need to:
+
+1. select the columns you need (`genre` and `energy`)
+2. filter for your **4** genres of interest
+3. group the genres
+4. calculate the mean energy for each genre
+
+First, I'll show you what genres you have to work with. Although it's not a focus of this workshop, the `unique()` function is quite useful when you want to know the unique values of a variable.
+```{r}
+unique(spotify$genre)
+```
+
+
+Now time to try it out! 
+
+
+-----
+
+### Recap
+Congratulations! You can use dplyr's grammar of data manipulation to access any data associated with a table---even if that data is not currently displayed by the table.
+
+In other words, you now know how to look at data in R, as well as how to access specific values and calculate summary statistics.
+
+## Answers
+
+**Exercise 1**
+
+```{r}
+spotify %>%
+  filter(genre == "Blues") %>%
+  summarise(
+    avg_loud = mean(loudness),
+    max_dance = max(danceability),
+    min_energy = min(energy)
+  )
+```
+
+
+**Exercise 2**
+
+Using the `|` (or) Boolean operator
+```{r}
+spotify %>% 
+  select(genre, energy) %>% 
+  filter(genre == "Ska" | genre == "Rock" | genre == "Rap" | genre == "Indie") %>% 
+  group_by(genre) %>% 
+  summarize(avg_energy = mean(energy)) 
+```
+
+
+Using the `%in%` Boolean operator
+```{r}
+spotify %>% 
+  select(genre, energy) %>% 
+  filter(genre %in% c("Ska", "Rock", "Rap", "Indie")) %>% 
+  group_by(genre) %>% 
+  summarize(avg_energy = mean(energy)) 
+```
+
+
+-----
+
+[<<< Previous](03_piping.md)
+
