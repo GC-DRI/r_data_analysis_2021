@@ -4,4 +4,7 @@
 .Ruserdata
 00_acquire_spotify_data.Rmd
 00_acquire_spotify_data.html
+00_acquire_spotify_data_cache/
+00_acquire_spotify_data_files/
 .httr-oauth
+
