@@ -20,7 +20,20 @@ In addition to "wrangling" data, you will learn how to create visually appealing
 
 This tutorial uses the [core tidyverse packages](http://tidyverse.org/), including ```ggplot2```, ```tibble```, ```readr```, and ```dplyr```.  
 
-* For a PDF with code detailing how I mined the data, [click here]()
+* For a PDF with code detailing how I mined the data,
+```{r, echo = FALSE}
+## Link in Github repo
+download_link(
+  link = "https://github.com/GC-DRI/r_data_analysis_2021/raw/main/00_acquire_spotify_data.pdf",
+  button_label = "Download data mining pdf",
+  button_type = "danger",
+  has_icon = TRUE,
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+
+```
+
 
 ## Music
 
