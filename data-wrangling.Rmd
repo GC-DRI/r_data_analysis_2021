@@ -16,115 +16,93 @@ In this case study, we will explore how the musical tastes of the American publi
 * `group_by()`, which lets you group your data by a factor
 * `summarize()`, which lets you perform a function on your grouped data
 
-In addition to "wrangling" data, you will learn how to create visually appealing and effective data visualizations. Mastering these two skills will help you efficiently explore your data and create publishable figures.
+In addition to "wrangling" data, you will learn how to create visually appealing and effective data visualizations using the `ggplot2` package. Mastering these two skills will help you efficiently explore your data and create publishable figures.
 
 This tutorial uses the [core tidyverse packages](http://tidyverse.org/), including ```ggplot2```, ```tibble```, ```readr```, and ```dplyr```.  
 
-* For a PDF with code detailing how I mined the data,
-```{r, echo = FALSE}
-## Link in Github repo
-download_link(
-  link = "https://github.com/GC-DRI/r_data_analysis_2021/raw/main/00_acquire_spotify_data.pdf",
-  button_label = "Download data mining pdf",
-  button_type = "danger",
-  has_icon = TRUE,
-  icon = "fa fa-save",
-  self_contained = FALSE
-)
-
-```
-
+\* For a PDF with code detailing how I mined the data,  
+<a id="raw-url" href="https://github.com/GC-DRI/r_data_analysis_2021/raw/main/00_acquire_spotify_data.pdf">Click here</a>
 
 ## Music
 
-First, let's load the tidyverse suite of packages. 
-```{r spotify, echo = TRUE, message = FALSE, warning = FALSE}
+First, let's load the `tidyverse` suite of packages and the `here` package. The `here` package is a simple package that makes reproducing file paths much easier. We'll see it in action in the next code chunk.
+```{r setup, echo = TRUE, message = FALSE, warning = FALSE}
 library(tidyverse)
+library(here)
 ```
 
 ### Spotify data
 
-Now you need to read in your Spotify data. We'll use the ```read_csv``` function for this.
+Now let's read in the Spotify data. We'll use the `read_csv` function for this. Notice our use of the `here` function as well. Rather than typing in a path, we're specifying each part of the path within the function. `here` does the rest, based on the user's operating system. This prevents the "forward-slash, back-slash" incompatibility across Windows and UNIX systems.  
 
-```{r}
-spotify <- read_csv("data/spotify.csv")
+`read_csv` also handily outputs the columns and their types it interprets from the CSV file. This gives you a quick check to make sure the columns are being correctly read in and interpreted. Which columns are numeric and which are character?
+
+```{r spotify}
+spotify <- read_csv(here("data", "spotify.csv"))
 ```
 
-Let's take a look at the data set. I will demonstrate two ways to do this. The first is just to print the data set to the screen. 
+Let's take a look at the data set. I will demonstrate two ways to do this, although there are many functions available to view your data. The first is just to print the data set to the screen. Notice the `<dbl>` and `<chr>` notes below each column name. This is telling you what type of data each column contains. You should also see information about how many rows and columns are in the data. It's always useful to check both of these data characteristics during an analysis to make sure you aren't getting rid of data that you need and only keeping data that you want.  
 
-```{r echo = TRUE}
+```{r spotify-print, echo = TRUE}
 spotify
 ```
 
-Although  get a full look at the data, I use the `View()` function from base R. This displays your data frame in a spreadsheet-like format that has basic sorting functionality. Let's try that!
+To display the data in a spreadsheet-like format, try out the `View()` function from base R. There is some basic sorting functionality that may be familiar to you. I like to use this function when I'm interested in quickly scrolling through more than the first 10 or so observations, or I have a large number of variables I want to page through and not have to deal with viewing them in the console. Let's try it out!
 
-```{r, eval=FALSE}
+```{r spotify-view, eval=FALSE}
 View(spotify)
 ```
 
 
-### Trends in your favorite music
+### Billboard Top 200 trends
 
-You can use the provided `spotify` data to learn more about your favorite music genres. For instance, which of your favorite musical genres will pep you up the most?
+The `spotify` data set we're using today has a lot of potential for interesting analyses. For instance, do Billboard Top 200 hits tend to be more vocal or more instrumental? Looks like they're predominantly vocal!
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, out.width = "70%"}
+```{r inst-hist, echo = FALSE, message = FALSE, warning = FALSE, out.width = "70%"}
 spotify %>% 
-  dplyr::filter(genre == str_match(genre, pattern = "Ska|Rock|Rap|Indie|Jazz|Classical")) %>% 
-  group_by(genre) %>% 
-  summarize_if(is.numeric, mean) %>% 
-  mutate(genre = fct_reorder(genre, energy)) %>% 
-  ggplot(aes(x = genre, y = energy)) +
-  geom_col() +
-  labs(title = "Which musical genre has the most energy?", 
-       x = "Genre",
-       y = "Energy") +
-  coord_flip() +
+  ggplot(aes(x = instrumentalness)) +
+  geom_histogram(bins = 50, fill = "darkblue") + 
   theme_minimal() +
-  theme(text = element_text(size = 14))
+  labs(x = "Instrumentalness", 
+       y = "Frequency",
+       title = "Distribution of instrumentalness across Billboard Top 200 tracks ")
+  
 ```
 
-But before you do, you will need to trim down `spotify`. At the moment, there are more rows in `spotify` than you need to build your plot. 
+Does this pattern change across the time periods we sampled the Top 200 chart? Doesn't look like it. Top 40 radio doesn't really appreciate intrumental music...  
 
-### An example
 
-To see what I mean, consider how I made the plot above: I began with the entire data set, which if I plotted everything as a scatterplot would've looked like this. This is a big jumbled mess. It doesn't tell me much about what I'm interested in.
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE, out.width = "60%", cached = TRUE}
+```{r inst-hist-facet, echo = FALSE, message = FALSE, warning = FALSE, out.width = "70%"}
 spotify %>% 
-  ggplot(aes(x = genre, y = energy)) +
-  geom_point() +
-  labs(title = "Which musical genre has the most energy?", 
-       x = "Genre",
-       y = "Energy") +
-  coord_flip() +
+  mutate(time_long = case_when(
+    time_period == "current" ~ "Current",
+    time_period == "early" ~ "Early in pandemic",
+    time_period == "first" ~ "First COVID peak",
+    time_period == "pre" ~ "Before the pandemic"
+  )) %>% 
+  mutate(time_long = fct_relevel(time_long,
+                               "Before the pandemic",
+                               "Early in pandemic",
+                               "First COVID peak",
+                               "Current")) %>% 
+  ggplot(aes(x = instrumentalness)) +
+  geom_histogram(bins = 50, fill = "darkblue") + 
+  facet_wrap(~time_long) +
   theme_minimal() +
-  theme(text = element_text(size = 12))
+  labs(x = "Instrumentalness", 
+       y = "Frequency",
+       title = "Distribution of instrumentalness across Billboard Top 200 tracks")
 ```
 
-I then narrowed the data to just the rows that contain my selected genres. Here's how the rows with just the genres I'm interested in look as a scatterplot.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE,  out.width = "60%", cached = TRUE}
-spotify %>% 
-  dplyr::filter(genre == str_match(genre, pattern = "Ska|Rock|Rap|Indie|Jazz|Classical")) %>% 
-  ggplot(aes(x = genre, y = energy)) +
-  geom_point() +
-  labs(title = "Which musical genre has the most energy?", 
-       x = "Genre",
-       y = "Energy") +
-  coord_flip() +
-  theme_minimal() +
-  theme(text = element_text(size = 12))
-```
-
-This tells me a little bit more about the data, but I'm really just interested in the average. This leads us back to my first plot, which shows the average energy for each genre.
-
-Your goal in this workshop is to repeat this process for your own genres. Along the way, you will learn a set of functions that isolate and summarize information within a data set. 
+While this makes sense and is somewhat interesting, I think we can uncover some more interesting patterns in the data with a little digging.  
 
 ### Sections
+Your goal in this workshop is to uncover more (interesting) patterns in the `spotify` data. Along the way, you will gain a data wrangling and visualization tool set that will help you explore and present data in any context.  
 
-1) [Isolating data](02_isolating-data.md)  
-2) [Piping](03_piping.md)  
-3) [Summarizing data](04_summarizing-data.md)  
+1) [Isolating data and visualizing distributions](02_isolating-data.md)  
+2) [Piping and adding color](03_piping.md)  
+3) [Summarizing data and faceting](04_summarizing-data.md)  
 
 
 -----

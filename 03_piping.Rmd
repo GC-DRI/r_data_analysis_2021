@@ -21,23 +21,22 @@ spotify <- read_csv("data/spotify.csv")
 
 Notice how each dplyr function takes a data frame as input and returns a data frame as output. This makes the functions easy to use in a step by step fashion. For example, you could:
 
-1. Filter `spotify` to just Rap songs, then
+1. Filter `spotify` to just songs in a minor key, then
 2. Select the `loudness` and `energy` columns from the result
 
 ```{r echo = TRUE}
-rap <- filter(spotify, genre == "Rap")
-rap <- select(rap, loudness, energy)
-rap
+minor_songs <- filter(spotify, mode == 0)
+minor_songs <- select(minor_songs, loudness, energy)
+minor_songs
 ```
 
 ### Redundancy
+ Do you notice how we re-create `minor_songs` at each step so we will have something to pass to the next step? This is an inefficient way to write R code.
 
-The result shows us the loudest rap songs and their energy levels in our data set. But take a look at the code. Do you notice how we re-create `rap` at each step so we will have something to pass to the next step? This is an inefficient way to write R code.
-
-You could avoid creating `rap` by nesting your functions inside of each other, but this creates code that is hard to read:
+You could avoid creating `minor_songs` by nesting your functions inside of each other, but this creates code that is hard to read:
 
 ```{r echo = TRUE, eval = FALSE}
-select(filter(spotify, genre == "Rap"), loudness, energy)
+select(filter(spotify, mode == 0), loudness, energy)
 ```
 
 The dplyr package provides a third way to write sequences of functions: the pipe.

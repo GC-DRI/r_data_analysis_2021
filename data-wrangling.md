@@ -1,4 +1,4 @@
-Data Wrangling in R
+R for Data Analysis
 ================
 
 [Next \>\>\>](02_isolating-data.md)
@@ -6,17 +6,23 @@ Data Wrangling in R
 ## Welcome
 
 The layout and much of the content in this tutorial borrows from
-[RStudio Primers](https://rstudio.cloud/learn/primers), and the
-`spotify` data is modified from [this kaggle data
-set](https://www.kaggle.com/zaheenhamidani/ultimate-spotify-tracks-db).
-I would highly recommend exploring [RStudio
+[RStudio Primers](https://rstudio.cloud/learn/primers). I would highly
+recommend exploring [RStudio
 Primers](https://rstudio.cloud/learn/primers) as they are a great
 resource for learning basic and intermediate R concepts\!
 
-In this case study, you will explore qualities of your favorite music
-genres. Along the way, you will master some of the most useful functions
-for isolating and summarizing variables, cases, and values within a data
-frame:
+In this case study, we will explore how the musical tastes of the
+American public has changed in relation to the COVID-19 pandemic. We’re
+working with a fun data set comprised of the musical attributes of
+[Billboard Top 200](https://www.billboard.com/charts/billboard-200)
+songs from four weeks at different time periods- pre-COVID, the
+beginning of COVID, the first COVID peak, and the current state (as of
+the writing of this workshop). The musical attributes were mined using
+the [spotifyr](https://www.rcharlie.com/spotifyr/) interface to the
+[Spotify Web
+API](https://developer.spotify.com/documentation/web-api/)\*. Along the
+way, you will master some of the core functions for isolating and
+summarizing variables, cases, and values within a data frame:
 
   - `select()` and `filter()`, which let you extract columns and rows
     from a data frame
@@ -26,105 +32,140 @@ frame:
   - `summarize()`, which lets you perform a function on your grouped
     data
 
+In addition to “wrangling” data, you will learn how to create visually
+appealing and effective data visualizations using the `ggplot2` package.
+Mastering these two skills will help you efficiently explore your data
+and create publishable figures.
+
 This tutorial uses the [core tidyverse packages](http://tidyverse.org/),
-including `ggplot2`, `tibble`, and `dplyr`.
+including `ggplot2`, `tibble`, `readr`, and `dplyr`.
+
+\* For a PDF with code detailing how I mined the data,  
+<a id="raw-url" href="https://github.com/GC-DRI/r_data_analysis_2021/raw/main/00_acquire_spotify_data.pdf">Click
+here</a>
 
 ## Music
 
-First, let’s load the tidyverse suite of packages.
+First, let’s load the `tidyverse` suite of packages and the `here`
+package. The `here` package is a simple package that makes reproducing
+file paths much easier. We’ll see it in action in the next code chunk.
 
 ``` r
 library(tidyverse)
+library(here)
 ```
 
 ### Spotify data
 
-Now you need to read in your Spotify data. We’ll use the `read_csv`
-function for this.
+Now let’s read in the Spotify data. We’ll use the `read_csv` function
+for this. Notice our use of the `here` function as well. Rather than
+typing in a path, we’re specifying each part of the path within the
+function. `here` does the rest, based on the user’s operating system.
+This prevents the “forward-slash, back-slash” incompatibility across
+Windows and UNIX systems.
+
+`read_csv` also handily outputs the columns and their types it
+interprets from the CSV file. This gives you a quick check to make sure
+the columns are being correctly read in and interpreted. Which columns
+are numeric and which are character?
 
 ``` r
-spotify <- read_csv("data/spotify.csv")
+spotify <- read_csv(here("data", "spotify.csv"))
 ```
 
-    ## Parsed with column specification:
+    ## 
+    ## ── Column specification ────────────────────────────────────────────────────────
     ## cols(
-    ##   genre = col_character(),
-    ##   energy = col_double(),
-    ##   loudness = col_double(),
-    ##   tempo = col_double(),
+    ##   rank = col_double(),
+    ##   track = col_character(),
+    ##   artist = col_character(),
+    ##   time_period = col_character(),
     ##   danceability = col_double(),
-    ##   lyrics = col_character()
+    ##   energy = col_double(),
+    ##   key = col_double(),
+    ##   loudness = col_double(),
+    ##   mode = col_double(),
+    ##   speechiness = col_double(),
+    ##   acousticness = col_double(),
+    ##   instrumentalness = col_double(),
+    ##   liveness = col_double(),
+    ##   valence = col_double(),
+    ##   tempo = col_double(),
+    ##   duration_ms = col_double(),
+    ##   time_signature = col_double()
     ## )
 
 Let’s take a look at the data set. I will demonstrate two ways to do
-this. The first is just to print the data set to the screen.
+this, although there are many functions available to view your data. The
+first is just to print the data set to the screen. Notice the `<dbl>`
+and `<chr>` notes below each column name. This is telling you what type
+of data each column contains. You should also see information about how
+many rows and columns are in the data. It’s always useful to check both
+of these data characteristics during an analysis to make sure you aren’t
+getting rid of data that you need and only keeping data that you want.
 
 ``` r
 spotify
 ```
 
-    ## # A tibble: 26,000 x 6
-    ##    genre    energy loudness tempo danceability lyrics                           
-    ##    <chr>     <dbl>    <dbl> <dbl>        <dbl> <chr>                            
-    ##  1 Alterna…  0.647    -8.51  79.8        0.709 into into into of him by economi…
-    ##  2 Alterna…  0.735    -4.75 163.         0.436 paying fishing realizes Johnson …
-    ##  3 Alterna…  0.917    -6.09 141.         0.544 man has happened then to his by …
-    ##  4 Alterna…  0.606    -5.06  93.1        0.603 realizes him Johnson I flees his…
-    ##  5 Alterna…  0.641    -5.10 142.         0.487 she he his by before then depict…
-    ##  6 Alterna…  0.973    -3.64 126.         0.524 she mainland Mark Mr. depicts ec…
-    ##  7 Alterna…  0.919    -5.94 108.         0.657 by charter forced into who is aw…
-    ##  8 Alterna…  0.889    -4.43 132.         0.611 by forced any Mark slipping main…
-    ##  9 Alterna…  0.761    -4.47 119.         0.675 Mark she mainland without Johnso…
-    ## 10 Alterna…  0.611    -5.74  79.6        0.584 away airplane I his his she man …
-    ## # … with 25,990 more rows
+    ## # A tibble: 787 x 17
+    ##     rank track artist time_period danceability energy   key loudness  mode
+    ##    <dbl> <chr> <chr>  <chr>              <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ##  1     1 Wast… Hozier pre                0.427  0.407     2    -9.66     1
+    ##  2     2 Than… Arian… pre                0.717  0.653     1    -5.63     1
+    ##  3     3 A St… Lady … pre                0.572  0.385     7    -6.36     1
+    ##  4     4 Rap … 2 Cha… pre                0.793  0.399     7    -7.43     1
+    ##  5     5 Shel… Lil S… pre                0.826  0.513     2    -9.02     1
+    ##  6     6 Bohe… Queen  pre                0.807  0.414     4    -8.90     1
+    ##  7     7 When… Solan… pre                0.245  0.773     0    -5.98     1
+    ##  8     8 Drip… Gunna  pre                0.916  0.756     0    -7.65     1
+    ##  9     9 FATH… Offset pre                0.736  0.515     1    -7.74     1
+    ## 10    10 Hood… A Boo… pre                0.775  0.465     4   -10.8      0
+    ## # … with 777 more rows, and 8 more variables: speechiness <dbl>,
+    ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
+    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>
 
-Although get a full look at the data, I use the `View()` function from
-base R. This displays your data frame in a spreadsheet-like format that
-has basic sorting functionality. Let’s try that\!
+To display the data in a spreadsheet-like format, try out the `View()`
+function from base R. There is some basic sorting functionality that may
+be familiar to you. I like to use this function when I’m interested in
+quickly scrolling through more than the first 10 or so observations, or
+I have a large number of variables I want to page through and not have
+to deal with viewing them in the console. Let’s try it out\!
 
 ``` r
 View(spotify)
 ```
 
-### Trends in your favorite music
+### Billboard Top 200 trends
 
-You can use the provided `spotify` data to learn more about your
-favorite music genres. For instance, which of your favorite musical
-genres will pep you up the most?
+The `spotify` data set we’re using today has a lot of potential for
+interesting analyses. For instance, do Billboard Top 200 hits tend to be
+more vocal or more instrumental? Looks like they’re predominantly
+vocal\!
 
-<img src="data-wrangling_files/figure-gfm/unnamed-chunk-4-1.png" width="70%" />
+<img src="data-wrangling_files/figure-gfm/inst-hist-1.png" width="70%" />
 
-But before you do, you will need to trim down `spotify`. At the moment,
-there are more rows in `spotify` than you need to build your plot.
+Does this pattern change across the time periods we sampled the Top 200
+chart? Doesn’t look like it. Top 40 radio doesn’t really appreciate
+intrumental music…
 
-### An example
+<img src="data-wrangling_files/figure-gfm/inst-hist-facet-1.png" width="70%" />
 
-To see what I mean, consider how I made the plot above: I began with the
-entire data set, which if I plotted everything as a scatterplot would’ve
-looked like this. This is a big jumbled mess. It doesn’t tell me much
-about what I’m interested in.
-
-<img src="data-wrangling_files/figure-gfm/unnamed-chunk-5-1.png" width="60%" />
-
-I then narrowed the data to just the rows that contain my selected
-genres. Here’s how the rows with just the genres I’m interested in look
-as a scatterplot.
-
-<img src="data-wrangling_files/figure-gfm/unnamed-chunk-6-1.png" width="60%" />
-
-This tells me a little bit more about the data, but I’m really just
-interested in the average. This leads us back to my first plot, which
-shows the average energy for each genre.
-
-Your goal in this workshop is to repeat this process for your own
-genres. Along the way, you will learn a set of functions that isolate
-and summarize information within a data set.
+While this makes sense and is somewhat interesting, I think we can
+uncover some more interesting patterns in the data with a little
+digging.
 
 ### Sections
 
-1)  [Isolating data](02_isolating-data.md)  
-2)  [Piping](03_piping.md)  
-3)  [Summarizing data](04_summarizing-data.md)
+Your goal in this workshop is to uncover more (interesting) patterns in
+the `spotify` data. Along the way, you will gain a data wrangling and
+visualization tool set that will help you explore and present data in
+any context.
+
+1)  [Isolating data and visualizing
+    distributions](02_isolating-data.md)  
+2)  [Piping and adding color](03_piping.md)  
+3)  [Summarizing data and faceting](04_summarizing-data.md)
 
 -----
 
