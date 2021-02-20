@@ -8,7 +8,7 @@ output: github_document
 ## Welcome
 The layout and much of the content in this tutorial borrows from [RStudio Primers](https://rstudio.cloud/learn/primers). I would highly recommend exploring [RStudio Primers](https://rstudio.cloud/learn/primers) as they are a great resource for learning basic and intermediate R concepts!  
 
-In this case study, we will explore how the musical tastes of the American public has changed in relation to the COVID-19 pandemic. We're working with a fun data set comprised of the musical attributes of [Billboard Top 200](https://www.billboard.com/charts/billboard-200) songs from four weeks at different time periods- pre-COVID, the beginning of COVID, the first COVID peak, and the current state (as of the writing of this workshop). The musical attributes were mined using the [spotifyr](https://www.rcharlie.com/spotifyr/) interface to the [Spotify Web API](https://developer.spotify.com/documentation/web-api/)*. Along the way, you will master some of the core functions for isolating and summarizing variables, cases, and values within a data frame:
+In this case study, we will explore how the musical tastes of the American public has changed in relation to the COVID-19 pandemic and other factors. We're working with a fun data set comprised of the musical attributes of weekly [Billboard Hot 100](https://www.billboard.com/charts/billboard-200) songs from February 2019 to February 2021. The musical attributes were mined using the [spotifyr](https://www.rcharlie.com/spotifyr/) interface to the [Spotify Web API](https://developer.spotify.com/documentation/web-api/)*. Along the way, you will master some of the core functions for isolating and summarizing variables, cases, and values within a data frame:
 
 * `select()` and `filter()`, which let you extract columns and rows from a data frame
 * `arrange()`, which lets you reorder the rows in your data
@@ -54,7 +54,7 @@ View(spotify)
 ```
 
 
-### Billboard Top 200 trends
+### Billboard Hot 100 trends
 
 The `spotify` data set we're using today has a lot of potential for interesting analyses. For instance, do Billboard Top 200 hits tend to be more vocal or more instrumental? Looks like they're predominantly vocal!
 
@@ -65,33 +65,29 @@ spotify %>%
   theme_minimal() +
   labs(x = "Instrumentalness", 
        y = "Frequency",
-       title = "Distribution of instrumentalness across Billboard Top 200 tracks ")
+       title = "Distribution of instrumentalness across Billboard Hot 100 tracks ")
   
 ```
 
-Does this pattern change across the time periods we sampled the Top 200 chart? Doesn't look like it. Top 40 radio doesn't really appreciate intrumental music...  
+Does this pattern change across the time periods we sampled the Hot 100 chart? Doesn't look like it. Top 40 radio doesn't really appreciate intrumental music...  
 
 
 ```{r inst-hist-facet, echo = FALSE, message = FALSE, warning = FALSE, out.width = "70%"}
 spotify %>% 
   mutate(time_long = case_when(
-    time_period == "current" ~ "Current",
-    time_period == "early" ~ "Early in pandemic",
-    time_period == "first" ~ "First COVID peak",
-    time_period == "pre" ~ "Before the pandemic"
+    covid_period == "pre_covid" ~ "Pre-COVID",
+    covid_period == "post_covid" ~ "Post-COVID"
   )) %>% 
   mutate(time_long = fct_relevel(time_long,
-                               "Before the pandemic",
-                               "Early in pandemic",
-                               "First COVID peak",
-                               "Current")) %>% 
+                               "Pre-COVID",
+                               "Post-COVID")) %>% 
   ggplot(aes(x = instrumentalness)) +
   geom_histogram(bins = 50, fill = "darkblue") + 
   facet_wrap(~time_long) +
   theme_minimal() +
   labs(x = "Instrumentalness", 
        y = "Frequency",
-       title = "Distribution of instrumentalness across Billboard Top 200 tracks")
+       title = "Distribution of instrumentalness across Billboard Hot 100 tracks")
 ```
 
 
@@ -102,7 +98,7 @@ Your goal in this workshop is to uncover more (interesting) patterns in the `spo
 
 1) [Isolating data and visualizing distributions](02_isolating-data.md)  
 2) [Piping and adding color](03_piping.md)  
-3) [Summarizing data and faceting](04_summarizing-data.md)  
+3) [Summarizing data and visualizing trends](04_summarizing-data.md)  
 
 
 -----

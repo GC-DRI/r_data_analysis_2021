@@ -1,35 +1,34 @@
 R for Data Analysis
 ================
 
-[Next \>\>\>](02_isolating-data.md)
+[Next &gt;&gt;&gt;](02_isolating-data.md)
 
-## Welcome
+Welcome
+-------
 
 The layout and much of the content in this tutorial borrows from
 [RStudio Primers](https://rstudio.cloud/learn/primers). I would highly
 recommend exploring [RStudio
 Primers](https://rstudio.cloud/learn/primers) as they are a great
-resource for learning basic and intermediate R concepts\!
+resource for learning basic and intermediate R concepts!
 
 In this case study, we will explore how the musical tastes of the
-American public has changed in relation to the COVID-19 pandemic. We’re
-working with a fun data set comprised of the musical attributes of
-[Billboard Top 200](https://www.billboard.com/charts/billboard-200)
-songs from four weeks at different time periods- pre-COVID, the
-beginning of COVID, the first COVID peak, and the current state (as of
-the writing of this workshop). The musical attributes were mined using
-the [spotifyr](https://www.rcharlie.com/spotifyr/) interface to the
-[Spotify Web
-API](https://developer.spotify.com/documentation/web-api/)\*. Along the
-way, you will master some of the core functions for isolating and
+American public has changed in relation to the COVID-19 pandemic and
+other factors. We’re working with a fun data set comprised of the
+musical attributes of weekly [Billboard Hot
+100](https://www.billboard.com/charts/billboard-200) songs from February
+2019 to February 2021. The musical attributes were mined using the
+[spotifyr](https://www.rcharlie.com/spotifyr/) interface to the [Spotify
+Web API](https://developer.spotify.com/documentation/web-api/)\*. Along
+the way, you will master some of the core functions for isolating and
 summarizing variables, cases, and values within a data frame:
 
-  - `select()` and `filter()`, which let you extract columns and rows
+-   `select()` and `filter()`, which let you extract columns and rows
     from a data frame
-  - `arrange()`, which lets you reorder the rows in your data
-  - `%>%`, which organizes your code into reader-friendly “pipes”
-  - `group_by()`, which lets you group your data by a factor
-  - `summarize()`, which lets you perform a function on your grouped
+-   `arrange()`, which lets you reorder the rows in your data
+-   `%>%`, which organizes your code into reader-friendly “pipes”
+-   `group_by()`, which lets you group your data by a factor
+-   `summarize()`, which lets you perform a function on your grouped
     data
 
 In addition to “wrangling” data, you will learn how to create visually
@@ -44,16 +43,15 @@ including `ggplot2`, `tibble`, `readr`, and `dplyr`.
 <a id="raw-url" href="https://github.com/GC-DRI/r_data_analysis_2021/raw/main/00_acquire_spotify_data.pdf">Click
 here</a>
 
-## Music
+Music
+-----
 
 First, let’s load the `tidyverse` suite of packages and the `here`
 package. The `here` package is a simple package that makes reproducing
 file paths much easier. We’ll see it in action in the next code chunk.
 
-``` r
-library(tidyverse)
-library(here)
-```
+    library(tidyverse)
+    library(here)
 
 ### Spotify data
 
@@ -69,31 +67,20 @@ interprets from the CSV file. This gives you a quick check to make sure
 the columns are being correctly read in and interpreted. Which columns
 are numeric and which are character?
 
-``` r
-spotify <- read_csv(here("data", "spotify.csv"))
-```
+    spotify <- read_csv(here("data", "spotify.csv"))
 
     ## 
     ## ── Column specification ────────────────────────────────────────────────────────
     ## cols(
-    ##   rank = col_double(),
+    ##   .default = col_double(),
     ##   track = col_character(),
     ##   artist = col_character(),
-    ##   time_period = col_character(),
-    ##   danceability = col_double(),
-    ##   energy = col_double(),
-    ##   key = col_double(),
-    ##   loudness = col_double(),
-    ##   mode = col_double(),
-    ##   speechiness = col_double(),
-    ##   acousticness = col_double(),
-    ##   instrumentalness = col_double(),
-    ##   liveness = col_double(),
-    ##   valence = col_double(),
-    ##   tempo = col_double(),
-    ##   duration_ms = col_double(),
-    ##   time_signature = col_double()
+    ##   week = col_date(format = ""),
+    ##   month = col_character(),
+    ##   season = col_character(),
+    ##   covid_period = col_character()
     ## )
+    ## ℹ Use `spec()` for the full column specifications.
 
 Let’s take a look at the data set. I will demonstrate two ways to do
 this, although there are many functions available to view your data. The
@@ -104,48 +91,45 @@ many rows and columns are in the data. It’s always useful to check both
 of these data characteristics during an analysis to make sure you aren’t
 getting rid of data that you need and only keeping data that you want.
 
-``` r
-spotify
-```
+    spotify
 
-    ## # A tibble: 787 x 17
-    ##     rank track artist time_period danceability energy   key loudness  mode
-    ##    <dbl> <chr> <chr>  <chr>              <dbl>  <dbl> <dbl>    <dbl> <dbl>
-    ##  1     1 Wast… Hozier pre                0.427  0.407     2    -9.66     1
-    ##  2     2 Than… Arian… pre                0.717  0.653     1    -5.63     1
-    ##  3     3 A St… Lady … pre                0.572  0.385     7    -6.36     1
-    ##  4     4 Rap … 2 Cha… pre                0.793  0.399     7    -7.43     1
-    ##  5     5 Shel… Lil S… pre                0.826  0.513     2    -9.02     1
-    ##  6     6 Bohe… Queen  pre                0.807  0.414     4    -8.90     1
-    ##  7     7 When… Solan… pre                0.245  0.773     0    -5.98     1
-    ##  8     8 Drip… Gunna  pre                0.916  0.756     0    -7.65     1
-    ##  9     9 FATH… Offset pre                0.736  0.515     1    -7.74     1
-    ## 10    10 Hood… A Boo… pre                0.775  0.465     4   -10.8      0
-    ## # … with 777 more rows, and 8 more variables: speechiness <dbl>,
+    ## # A tibble: 10,500 x 23
+    ##     rank track artist week       danceability energy   key loudness  mode
+    ##    <dbl> <chr> <chr>  <date>            <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ##  1     1 7 Ri… Arian… 2019-02-16        0.778  0.317     1   -10.7      0
+    ##  2     2 Happ… Marsh… 2019-02-16        0.687  0.792     5    -2.75     1
+    ##  3     3 With… Halsey 2019-02-16        0.752  0.488     6    -7.05     1
+    ##  4     4 Sunf… Post … 2019-02-16        0.76   0.479     2    -5.57     1
+    ##  5     5 Sick… Travi… 2019-02-16        0.834  0.73      8    -3.71     1
+    ##  6     6 High… Panic… 2019-02-16        0.579  0.904     5    -2.73     1
+    ##  7     7 Than… Arian… 2019-02-16        0.717  0.653     1    -5.63     1
+    ##  8     8 Midd… J. Co… 2019-02-16        0.837  0.364     8   -11.7      1
+    ##  9     9 Wow.  Post … 2019-02-16        0.829  0.539    11    -7.36     0
+    ## 10    10 Girl… Maroo… 2019-02-16        0.611  0.462     0    -7.05     1
+    ## # … with 10,490 more rows, and 14 more variables: speechiness <dbl>,
     ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
-    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>
+    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>, month <chr>,
+    ## #   day <dbl>, year <dbl>, season <chr>, time_since_covid <dbl>,
+    ## #   covid_period <chr>
 
 To display the data in a spreadsheet-like format, try out the `View()`
 function from base R. There is some basic sorting functionality that may
 be familiar to you. I like to use this function when I’m interested in
 quickly scrolling through more than the first 10 or so observations, or
 I have a large number of variables I want to page through and not have
-to deal with viewing them in the console. Let’s try it out\!
+to deal with viewing them in the console. Let’s try it out!
 
-``` r
-View(spotify)
-```
+    View(spotify)
 
-### Billboard Top 200 trends
+### Billboard Hot 100 trends
 
 The `spotify` data set we’re using today has a lot of potential for
 interesting analyses. For instance, do Billboard Top 200 hits tend to be
-more vocal or more instrumental? Looks like they’re predominantly
-vocal\!
+more vocal or more instrumental? Looks like they’re predominantly vocal!
 
 <img src="data-wrangling_files/figure-gfm/inst-hist-1.png" width="70%" />
 
-Does this pattern change across the time periods we sampled the Top 200
+Does this pattern change across the time periods we sampled the Hot 100
 chart? Doesn’t look like it. Top 40 radio doesn’t really appreciate
 intrumental music…
 
@@ -162,11 +146,11 @@ the `spotify` data. Along the way, you will gain a data wrangling and
 visualization tool set that will help you explore and present data in
 any context.
 
-1)  [Isolating data and visualizing
+1.  [Isolating data and visualizing
     distributions](02_isolating-data.md)  
-2)  [Piping and adding color](03_piping.md)  
-3)  [Summarizing data and faceting](04_summarizing-data.md)
+2.  [Piping and adding color](03_piping.md)  
+3.  [Summarizing data and faceting](04_summarizing-data.md)
 
------
+------------------------------------------------------------------------
 
-[Next \>\>\>](02_isolating-data.md)
+[Next &gt;&gt;&gt;](02_isolating-data.md)

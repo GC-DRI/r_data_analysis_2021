@@ -142,12 +142,12 @@ Jeez Spotify, I don't think `instrumentalness` is a very accurate metric! Or som
 
 See if you can use the logical operators to manipulate our code below to show:
 
-* All of the songs in the "current" `time_period`
+* All of the songs in the "post_covid" `covid_period`
 * All of the songs where `tempo` is less than or equal to 80
 * *Stretch challenge*. All songs that have more than 20 characters in their title. Hint: you will need to use the ```nchar()``` function.
 
 ```{r, eval=FALSE}
-filter(spotify, time_period == "pre")
+filter(spotify, covid_period == "pre_covid")
 ```
 
 
@@ -299,22 +299,22 @@ ggplot(data = spotify, aes(x = valence)) +
 
 I like this a bit better- the distribution looks to be mostly normal with a bit of a right-skew. Most songs appear to be middle of the road in their positivity.  
 
-I'm curious- minor keys tend to create a sad mood. Does this show up in the valence of the song? Let's use our data isolation skillset to `filter` our data set for songs with a minor key and then visualize the valence of those songs. The variable that contains this information is the `mode` variable, where **0** indicates a minor key and **1** indicates a major key.  
+I'm curious- the COVID pandemic has been extremely tough on the psyche of, I imagine, most people. Does this show up in our choice of pop music? Let's use our data isolation skillset to see if music from a time period before the pandemic (a random week in March 2019) was happier than the long-term average. We need to `filter` our data set for pre-COVID songs and then visualize the valence of those songs. The variable that contains this information is the `covid_period` variable, where `pre_covid` indicates the pre-COVID time frame.  
 ```{r}
-# first filter for minor key songs
-minor_songs <- filter(spotify, mode == 0)
+# first filter for pre-covid songs
+pre_covid <- filter(spotify, covid_period == "pre_covid")
 
 # now, visualize a histogram of the valence for these songs
-ggplot(data = minor_songs, aes(x = valence)) +
+ggplot(data = pre_covid, aes(x = valence)) +
   geom_histogram(binwidth = 0.1)
 ```
 
-Interesting! There seems to be a lump at the lower range of valence values. I think it would be cool to visualize the minor key distribution alongside the major key distribution. We'll learn this in the next data visualization segment!  
+Hmm, there doesn't seem to be a large change (if any). I think it would be cool to visualize the different periods of the COVID pandemic side-by-side to better visualize differences. We'll learn this in the next data visualization segment!  
 
 While these plots aren't too pretty, they get the message across. We will learn how to spruce up the plots in a bit!  
 
 **Exercise 4**  
-Try to make your own ggplot! Visualize a histogram of the `loudness` variable. Play around with the binwidths to get a feel of how this variable is distributed! If you're feeling a bit ambitious, see if you can filter the data by another variable (like `time_period` perhaps?) before you create the visualization to see if there is an interesting pattern not obvious in the full dataset.
+Try to make your own ggplot! Visualize a histogram of the `loudness` variable. Play around with the binwidths to get a feel of how this variable is distributed! If you're feeling a bit ambitious, see if you can filter the data by another variable (like `covid_period` perhaps?) before you create the visualization to see if there is an interesting pattern not obvious in the full dataset.
 
 -----
 
@@ -341,7 +341,7 @@ spotify %>% select(contains("n"))
 
 **Exercise 3**  
 ```{r, eval=FALSE}
-filter(spotify, time_period == "current")
+filter(spotify, covid_period == "post_covid")
 filter(spotify, tempo <= 80)
 filter(spotify, nchar(track) > 20)
 ```

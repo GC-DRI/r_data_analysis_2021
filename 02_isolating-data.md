@@ -1,9 +1,10 @@
 Isolating Data
 ================
 
-[\<\<\< Previous](data-wrangling.md) | [Next \>\>\>](03_piping.md)
+[&lt;&lt;&lt; Previous](data-wrangling.md) \| [Next
+&gt;&gt;&gt;](03_piping.md)
 
------
+------------------------------------------------------------------------
 
 This type of task occurs often in Data Science: you need to extract data
 from a table before you can use it. You can do this task quickly with
@@ -15,7 +16,8 @@ two functions that come in the `dplyr` package:
 Each function takes a data frame or tibble as it’s first argument and
 returns a new data frame or tibble as its output.
 
-## select()
+select()
+--------
 
 [![Source: dplyr
 cheatsheet](images/select.png)](https://rstudio.com/resources/cheatsheets/)
@@ -32,58 +34,54 @@ A typical `select()` call looks like this:
 
 If you want to select the `loudness` variable, you run this:
 
-``` r
-select(spotify, loudness)
-```
+    select(spotify, loudness)
 
-    ## # A tibble: 787 x 1
+    ## # A tibble: 10,500 x 1
     ##    loudness
     ##       <dbl>
-    ##  1    -9.66
-    ##  2    -5.63
-    ##  3    -6.36
-    ##  4    -7.43
-    ##  5    -9.02
-    ##  6    -8.90
-    ##  7    -5.98
-    ##  8    -7.65
-    ##  9    -7.74
-    ## 10   -10.8 
-    ## # … with 777 more rows
+    ##  1   -10.7 
+    ##  2    -2.75
+    ##  3    -7.05
+    ##  4    -5.57
+    ##  5    -3.71
+    ##  6    -2.73
+    ##  7    -5.63
+    ##  8   -11.7 
+    ##  9    -7.36
+    ## 10    -7.05
+    ## # … with 10,490 more rows
 
 Notice how it returned a data frame of the `loudness` variable, rather
-than a list or vector\!
+than a list or vector!
 
 If you want to extract more than one variable you can include them,
 separated by commas, as arguments to the function:  
 `select(spotify, loudness, instrumentalness, key)`
 
-Or, you can provide the variables as a vector\! They will return the
-same thing.
+Or, you can provide the variables as a vector! They will return the same
+thing.
 
-``` r
-select(spotify, c(loudness, instrumentalness, key))
-```
+    select(spotify, c(loudness, instrumentalness, key))
 
-    ## # A tibble: 787 x 3
+    ## # A tibble: 10,500 x 3
     ##    loudness instrumentalness   key
     ##       <dbl>            <dbl> <dbl>
-    ##  1    -9.66       0.386          2
-    ##  2    -5.63       0              1
-    ##  3    -6.36       0              7
-    ##  4    -7.43       0              7
-    ##  5    -9.02       0.0136         2
-    ##  6    -8.90       0.0000257      4
-    ##  7    -5.98       0.00046        0
-    ##  8    -7.65       0              0
-    ##  9    -7.74       0.00000431     1
-    ## 10   -10.8        0.0000393      4
-    ## # … with 777 more rows
+    ##  1   -10.7        0              1
+    ##  2    -2.75       0              5
+    ##  3    -7.05       0.00000911     6
+    ##  4    -5.57       0              2
+    ##  5    -3.71       0              8
+    ##  6    -2.73       0              5
+    ##  7    -5.63       0              1
+    ##  8   -11.7        0              8
+    ##  9    -7.36       0.00000178    11
+    ## 10    -7.05       0.00000101     0
+    ## # … with 10,490 more rows
 
 A third option, in case you have many variables or aren’t sure of the
 variable’s exact names, is to use `select helpers`.
 
------
+------------------------------------------------------------------------
 
 ### select() helpers
 
@@ -92,16 +90,14 @@ you place a minus sign before a column name, `select()` will return
 every column but that column. The code below will return every column
 except lyrics.
 
-``` r
-select(spotify, -lyrics)
-```
+    select(spotify, -lyrics)
 
 The table below summarizes most of the other `select()` helpers that are
 available in `dplyr`. This is here for your reference and to demonstrate
 the flexibility of `select()`
 
 | Helper Function    | Use                                          | Example                                         |
-| ------------------ | -------------------------------------------- | ----------------------------------------------- |
+|--------------------|----------------------------------------------|-------------------------------------------------|
 | **-**              | Columns except                               | `select(spotify, -loudness)`                    |
 | **:**              | Columns between (inclusive)                  | `select(spotify, loudness:danceability)`        |
 | **contains()**     | Columns that contains a string               | `select(spotify, contains("d"))`                |
@@ -116,31 +112,29 @@ the flexibility of `select()`
 Use the example below to get a feel for `select()`. Can you extract just
 the `artist` column? How about the `artist` and `energy` columns?
 
-``` r
-select(spotify, loudness)
-```
+    select(spotify, loudness)
 
-    ## # A tibble: 787 x 1
+    ## # A tibble: 10,500 x 1
     ##    loudness
     ##       <dbl>
-    ##  1    -9.66
-    ##  2    -5.63
-    ##  3    -6.36
-    ##  4    -7.43
-    ##  5    -9.02
-    ##  6    -8.90
-    ##  7    -5.98
-    ##  8    -7.65
-    ##  9    -7.74
-    ## 10   -10.8 
-    ## # … with 777 more rows
+    ##  1   -10.7 
+    ##  2    -2.75
+    ##  3    -7.05
+    ##  4    -5.57
+    ##  5    -3.71
+    ##  6    -2.73
+    ##  7    -5.63
+    ##  8   -11.7 
+    ##  9    -7.36
+    ## 10    -7.05
+    ## # … with 10,490 more rows
 
 **Exercise 2**  
 Use the `contains()` helper function to select the columns that contain
-the letter “n”. The structure should look like this: `select(spotify,
-contains("d"))`. What variables are returned?
+the letter “n”. The structure should look like this:
+`select(spotify, contains("d"))`. What variables are returned?
 
------
+------------------------------------------------------------------------
 
 ### Go further
 
@@ -151,9 +145,10 @@ need to, for instance, convert your *wide* data frame to a *long*
 data frame. For a short introduction, [check this
 out](https://tidyr.tidyverse.org/)
 
------
+------------------------------------------------------------------------
 
-## filter()
+filter()
+--------
 
 [![Source: dplyr
 cheatsheet](images/filter.png)](https://rstudio.com/resources/cheatsheets/)
@@ -167,23 +162,29 @@ return `TRUE`.
 ### Filter in action
 
 For example, the code chunk below returns every track with a 5/4 time
-signature in `spotify`. **7** has been on the charts for a while\! Also,
+signature in `spotify`. **7** has been on the charts for a while! Also,
 I’m happy to see my man John Prine switching up his time signatures too.
 
-``` r
-filter(spotify, time_signature == 5)
-```
+    filter(spotify, time_signature == 5)
 
-    ## # A tibble: 4 x 17
-    ##    rank track artist time_period danceability energy   key loudness  mode
-    ##   <dbl> <chr> <chr>  <chr>              <dbl>  <dbl> <dbl>    <dbl> <dbl>
-    ## 1    57 7 (E… Lil N… early              0.697  0.472     8    -12.0     1
-    ## 2    83 7 (E… Lil N… first              0.697  0.472     8    -12.0     1
-    ## 3   114 The … John … first              0.584  0.317     2    -13.5     1
-    ## 4    45 7 (E… Lil N… current            0.697  0.472     8    -12.0     1
-    ## # … with 8 more variables: speechiness <dbl>, acousticness <dbl>,
-    ## #   instrumentalness <dbl>, liveness <dbl>, valence <dbl>, tempo <dbl>,
-    ## #   duration_ms <dbl>, time_signature <dbl>
+    ## # A tibble: 146 x 23
+    ##     rank track artist week       danceability energy   key loudness  mode
+    ##    <dbl> <chr> <chr>  <date>            <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ##  1    27 Robb… Juice… 2019-03-02        0.685  0.692     2    -5.12     1
+    ##  2    87 Wort… YK Os… 2019-03-02        0.749  0.535     5    -4.05     0
+    ##  3    28 Robb… Juice… 2019-03-09        0.685  0.692     2    -5.12     1
+    ##  4    73 Wort… YK Os… 2019-03-09        0.749  0.535     5    -4.05     0
+    ##  5    34 Robb… Juice… 2019-03-16        0.685  0.692     2    -5.12     1
+    ##  6    65 Wort… YK Os… 2019-03-16        0.749  0.535     5    -4.05     0
+    ##  7    27 Robb… Juice… 2019-03-23        0.685  0.692     2    -5.12     1
+    ##  8    62 Wort… YK Os… 2019-03-23        0.749  0.535     5    -4.05     0
+    ##  9    35 Robb… Juice… 2019-03-30        0.685  0.692     2    -5.12     1
+    ## 10    56 Wort… YK Os… 2019-03-30        0.749  0.535     5    -4.05     0
+    ## # … with 136 more rows, and 14 more variables: speechiness <dbl>,
+    ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
+    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>, month <chr>,
+    ## #   day <dbl>, year <dbl>, season <chr>, time_since_covid <dbl>,
+    ## #   covid_period <chr>
 
 ### Logical tests
 
@@ -191,91 +192,82 @@ To get the most from filter, you will need to know how to use R’s
 logical test operators, which are summarized below.
 
 | Logical operator | tests                                | Example     |
-| ---------------- | ------------------------------------ | ----------- |
-| **\>**           | Is `x` greater than `y`?             | `x > y`     |
-| **\>=**          | Is `x` greater than or equal to `y`? | `x >= y`    |
-| **\<**           | Is `x` less than `y`?                | `x < y`     |
-| **\<=**          | Is `x` less than or equal to `y`?    | `x <= y`    |
+|------------------|--------------------------------------|-------------|
+| **&gt;**         | Is `x` greater than `y`?             | `x > y`     |
+| **&gt;=**        | Is `x` greater than or equal to `y`? | `x >= y`    |
+| **&lt;**         | Is `x` less than `y`?                | `x < y`     |
+| **&lt;=**        | Is `x` less than or equal to `y`?    | `x <= y`    |
 | **==**           | Is `x` equal to `y`?                 | `x == y`    |
-| **\!=**          | Is `x` not equal to `y`?             | `x != y`    |
+| **!=**           | Is `x` not equal to `y`?             | `x != y`    |
 | **is.na()**      | Is `x` an `NA`?                      | `is.na(x)`  |
-| **\!is.na()**    | Is `x` not an `NA`?                  | `!is.na(x)` |
+| **!is.na()**     | Is `x` not an `NA`?                  | `!is.na(x)` |
 
------
+------------------------------------------------------------------------
 
 Let’s look at another example before moving on to exercises. Tracks with
 an `instrumentalness` value greater than 0.5 are considered to likely be
 instrumental, according to the [metadata](data/meta.html). Let’s see
-which tracks are instrumental\!
+which tracks are instrumental!
 
-``` r
-filter(spotify, instrumentalness > 0.5)
-```
+    filter(spotify, instrumentalness > 0.5)
 
-    ## # A tibble: 55 x 17
-    ##     rank track artist time_period danceability energy   key loudness  mode
-    ##    <dbl> <chr> <chr>  <chr>              <dbl>  <dbl> <dbl>    <dbl> <dbl>
-    ##  1    13 ASTR… Travi… pre                0.784 0.539      6   -10.0      0
-    ##  2    25 Baby… DaBaby pre                0.324 0.532      1   -34.8      1
-    ##  3    34 Whil… Kehla… pre                0.622 0.347      9   -15.9      0
-    ##  4    39 Hami… Origi… pre                0.667 0.322      4   -19.3      0
-    ##  5    66 Cult… Migos  pre                0.613 0.647      0    -6.68     0
-    ##  6    67 This… Gary … pre                0.553 0.0252     0   -26.3      1
-    ##  7    93 More… Drake  pre                0.707 0.258     11   -10.7      0
-    ##  8    99 Perc… NF     pre                0.243 0.893      3    -4.82     0
-    ##  9   116 Nigh… Imagi… pre                0.808 0.441      7   -13.4      0
-    ## 10   125 BALL… Joji   pre                0.404 0.183      7   -19.0      1
-    ## # … with 45 more rows, and 8 more variables: speechiness <dbl>,
+    ## # A tibble: 43 x 23
+    ##     rank track artist week       danceability energy   key loudness  mode
+    ##    <dbl> <chr> <chr>  <date>            <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ##  1    65 How … Offse… 2019-03-09        0.71   0.578     0    -6.20     0
+    ##  2    60 How … Drake  2019-08-17        0.595  0.86      5    -5.37     0
+    ##  3    93 Fear… Tool   2019-08-17        0.31   0.584     7   -10.1      1
+    ##  4    85 In M… Frank… 2019-11-16        0.861  0.647     7    -7.42     1
+    ##  5    74 Ever… Billi… 2019-11-23        0.704  0.225     6   -14.5      0
+    ##  6     8 Ever… Billi… 2019-11-30        0.704  0.225     6   -14.5      0
+    ##  7    26 Ever… Billi… 2019-12-07        0.704  0.225     6   -14.5      0
+    ##  8    25 Ever… Billi… 2019-12-14        0.704  0.225     6   -14.5      0
+    ##  9    30 Ever… Billi… 2019-12-21        0.704  0.225     6   -14.5      0
+    ## 10    34 Ever… Billi… 2019-12-28        0.704  0.225     6   -14.5      0
+    ## # … with 33 more rows, and 14 more variables: speechiness <dbl>,
     ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
-    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>
+    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>, month <chr>,
+    ## #   day <dbl>, year <dbl>, season <chr>, time_since_covid <dbl>,
+    ## #   covid_period <chr>
 
 Huh, it seems like this isn’t a strict enough filter. There are quite a
 few tracks that definitely have words in them here. Let’s increase the
 filter to 0.8 and see where that gets us.
 
-``` r
-filter(spotify, instrumentalness > 0.8)
-```
+    filter(spotify, instrumentalness > 0.8)
 
-    ## # A tibble: 33 x 17
-    ##     rank track artist time_period danceability  energy   key loudness  mode
-    ##    <dbl> <chr> <chr>  <chr>              <dbl>   <dbl> <dbl>    <dbl> <dbl>
-    ##  1    25 Baby… DaBaby pre               0.324  0.532       1    -34.8     1
-    ##  2    34 Whil… Kehla… pre               0.622  0.347       9    -15.9     0
-    ##  3    39 Hami… Origi… pre               0.667  0.322       4    -19.3     0
-    ##  4    67 This… Gary … pre               0.553  0.0252      0    -26.3     1
-    ##  5   116 Nigh… Imagi… pre               0.808  0.441       7    -13.4     0
-    ##  6   125 BALL… Joji   pre               0.404  0.183       7    -19.0     1
-    ##  7   165 Delta Mumfo… pre               0.0757 0.00429     2    -38.5     1
-    ##  8   176 NOW … Vario… pre               0.466  0.531       6    -10.1     0
-    ##  9   182 Simo… Simon… pre               0.839  0.392       0    -12.1     1
-    ## 10   197 Illu… Shawn… pre               0      0.00983    10    -28.3     0
-    ## # … with 23 more rows, and 8 more variables: speechiness <dbl>,
-    ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
-    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>
+    ## # A tibble: 4 x 23
+    ##    rank track artist week       danceability energy   key loudness  mode
+    ##   <dbl> <chr> <chr>  <date>            <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ## 1    50 Can I Kehla… 2020-05-23        0.641  0.842     9    -7.27     1
+    ## 2    47 Deck… Nat K… 2020-12-26        0.72   0.487    10   -10.2      1
+    ## 3   100 Beau… Kid C… 2020-12-26        0.331  0.513    11   -15.4      0
+    ## 4    43 Deck… Nat K… 2021-01-02        0.72   0.487    10   -10.2      1
+    ## # … with 14 more variables: speechiness <dbl>, acousticness <dbl>,
+    ## #   instrumentalness <dbl>, liveness <dbl>, valence <dbl>, tempo <dbl>,
+    ## #   duration_ms <dbl>, time_signature <dbl>, month <chr>, day <dbl>,
+    ## #   year <dbl>, season <chr>, time_since_covid <dbl>, covid_period <chr>
 
 Jeez Spotify, I don’t think `instrumentalness` is a very accurate
-metric\! Or something may have gone wrong when I was mining the data…
+metric! Or something may have gone wrong when I was mining the data…
 This goes to show- exploring your data beforehand will help you catch
-errors early so they don’t make it into your analyses\!
+errors early so they don’t make it into your analyses!
 
 **Exercise 3**
 
 See if you can use the logical operators to manipulate our code below to
 show:
 
-  - All of the songs in the “current” `time_period`
-  - All of the songs where `tempo` is less than or equal to 80
-  - *Stretch challenge*. All songs that have more than 20 characters in
+-   All of the songs in the “post\_covid” `covid_period`
+-   All of the songs where `tempo` is less than or equal to 80
+-   *Stretch challenge*. All songs that have more than 20 characters in
     their title. Hint: you will need to use the `nchar()` function.
 
-<!-- end list -->
+<!-- -->
 
-``` r
-filter(spotify, time_period == "pre")
-```
+    filter(spotify, covid_period == "pre_covid")
 
------
+------------------------------------------------------------------------
 
 ### Two common mistakes
 
@@ -283,33 +275,32 @@ When you use logical tests, be sure to look out for two common mistakes.
 One appears in each code chunk below. Can you find them? When you spot a
 mistake, fix it and then run the chunk to confirm that it works.
 
-``` r
-filter(spotify, artist = "DaBaby")
-```
+    filter(spotify, artist = "DaBaby")
 
-``` r
-filter(spotify, artist == DaBaby)
-```
+    filter(spotify, artist == DaBaby)
 
 **Answer**
 
-``` r
-filter(spotify, artist == "DaBaby")
-```
+    filter(spotify, artist == "DaBaby")
 
-    ## # A tibble: 7 x 17
-    ##    rank track artist time_period danceability energy   key loudness  mode
-    ##   <dbl> <chr> <chr>  <chr>              <dbl>  <dbl> <dbl>    <dbl> <dbl>
-    ## 1    25 Baby… DaBaby pre                0.324  0.532     1   -34.8      1
-    ## 2    20 KIRK  DaBaby early              0.451  0.632     8    -7.98     0
-    ## 3    66 Baby… DaBaby early              0.324  0.532     1   -34.8      1
-    ## 4    32 KIRK  DaBaby first              0.451  0.632     8    -7.98     0
-    ## 5   115 Baby… DaBaby first              0.324  0.532     1   -34.8      1
-    ## 6     8 KIRK  DaBaby current            0.451  0.632     8    -7.98     0
-    ## 7    51 Baby… DaBaby current            0.324  0.532     1   -34.8      1
-    ## # … with 8 more variables: speechiness <dbl>, acousticness <dbl>,
-    ## #   instrumentalness <dbl>, liveness <dbl>, valence <dbl>, tempo <dbl>,
-    ## #   duration_ms <dbl>, time_signature <dbl>
+    ## # A tibble: 114 x 23
+    ##     rank track artist week       danceability energy   key loudness  mode
+    ##    <dbl> <chr> <chr>  <date>            <dbl>  <dbl> <dbl>    <dbl> <dbl>
+    ##  1    87 Suge  DaBaby 2019-04-13        0.876  0.662     2    -6.48     0
+    ##  2    63 Suge  DaBaby 2019-04-20        0.876  0.662     2    -6.48     0
+    ##  3    51 Suge  DaBaby 2019-04-27        0.876  0.662     2    -6.48     0
+    ##  4    46 Suge  DaBaby 2019-05-04        0.876  0.662     2    -6.48     0
+    ##  5    27 Suge  DaBaby 2019-05-11        0.876  0.662     2    -6.48     0
+    ##  6    22 Suge  DaBaby 2019-05-18        0.876  0.662     2    -6.48     0
+    ##  7    16 Suge  DaBaby 2019-05-25        0.876  0.662     2    -6.48     0
+    ##  8    14 Suge  DaBaby 2019-06-01        0.876  0.662     2    -6.48     0
+    ##  9     9 Suge  DaBaby 2019-06-08        0.876  0.662     2    -6.48     0
+    ## 10     8 Suge  DaBaby 2019-06-15        0.876  0.662     2    -6.48     0
+    ## # … with 104 more rows, and 14 more variables: speechiness <dbl>,
+    ## #   acousticness <dbl>, instrumentalness <dbl>, liveness <dbl>, valence <dbl>,
+    ## #   tempo <dbl>, duration_ms <dbl>, time_signature <dbl>, month <chr>,
+    ## #   day <dbl>, year <dbl>, season <chr>, time_since_covid <dbl>,
+    ## #   covid_period <chr>
 
 ### Two mistakes - Recap
 
@@ -326,10 +317,10 @@ You can find a complete list of base R’s boolean operators in the table
 below. This is here for your reference.
 
 | Boolean operator | represents                                 | Example             |
-| ---------------- | ------------------------------------------ | ------------------- |
+|------------------|--------------------------------------------|---------------------|
 | **&**            | Are *both* `A` and `B` true?               | `A & B`             |
-| `\|`             | Are *one or both* of `A` and `B` true?     | `A \| B`            |
-| **\!**           | Is `A` *not* true?                         | `!A`                |
+| `|`              | Are *one or both* of `A` and `B` true?     | `A | B`             |
+| **!**            | Is `A` *not* true?                         | `!A`                |
 | **xor()**        | Is *one and only one* of `A` and `B` true? | `xor(A, B)`         |
 | **%in%**         | Is `x` in the set of `a`, `b`, and `c`?    | `x %in% c(a, b, c)` |
 | **any()**        | Are *any* of `A`, `B`, or `C` true?        | `any(A, B, C)`      |
@@ -345,9 +336,7 @@ that satisfy all of the tests.
 
 For instance,
 
-``` r
-filter(spotify, mode == 0, tempo > 80)
-```
+    filter(spotify, mode == 0, tempo > 80)
 
 will only return songs that are in a minor key **and** are faster than
 80 beats per minute. Run this code and see how many observations are
@@ -355,16 +344,14 @@ returned.
 
 Now, try this.
 
-``` r
-filter(spotify, mode == 0 | tempo > 80)
-```
+    filter(spotify, mode == 0 | tempo > 80)
 
 Many more observations are returned because the function is filtering
 for songs that are in a minor key **or** have a tempo greater than 80
 beats per minute. A song only has to satisfy one of the criteria to pass
 the filter.
 
------
+------------------------------------------------------------------------
 
 ### Go further: stringr
 
@@ -376,9 +363,10 @@ to accomodate complex cases. I use `stringr` regularly within `filter()`
 and other data manipulation functions. If you’re interested, check out
 [this light introduction](https://stringr.tidyverse.org/).
 
------
+------------------------------------------------------------------------
 
-## Visualizing Distributions
+Visualizing Distributions
+-------------------------
 
 We’re going to kick off the data visualization segment with an
 introduction to the `ggplot2` package and a simple, but important task-
@@ -388,10 +376,9 @@ visualizing distributions.
 
 `ggplot2` is a plotting package that makes it simple to create complex
 plots from data in a data frame. It stands for “grammar of graphics
-plot” and the 2 comes from its total redesign after the creator
-[Hadley Wickham](http://hadley.nz/) scrapped the original package. The
-[grammar of
-graphics](https://vita.had.co.nz/papers/layered-grammar.html) is a
+plot” and the 2 comes from its total redesign after the creator [Hadley
+Wickham](http://hadley.nz/) scrapped the original package. The [grammar
+of graphics](https://vita.had.co.nz/papers/layered-grammar.html) is a
 useful framework to describe the components of a graphic. It provides a
 more programmatic interface for specifying what variables to plot, how
 they are displayed, and general visual properties. Therefore, we only
@@ -401,10 +388,10 @@ customization flexibility with reasonable defaults.
 
 In practical terms,
 
-  - `ggplot2` functions like tidy data. Well-structured data will save
+-   `ggplot2` functions like tidy data. Well-structured data will save
     you lots of time when making figures.
 
-  - `ggplot2` graphics are built step by step by adding new elements.
+-   `ggplot2` graphics are built step by step by adding new elements.
     Adding layers in this fashion allows for extensive flexibility and
     customization of plots.
 
@@ -413,7 +400,7 @@ In practical terms,
 To build a ggplot, we will use the following basic template that can be
 used for different types of plots:
 
-`ggplot(data = < DATA > , aes( < MAPPINGS > )) + geom_FUNCTION()`
+`ggplot(data = < DATA > , aes( < MAPPINGS > )) +  geom_FUNCTION()`
 
 *data* Bind the plot to a specific data frame using the data argument
 
@@ -436,46 +423,44 @@ Plot components are tied together using the `+` operator. You can add
 or add components that customize the plot- we will get to this part
 later.
 
-Let’s build a plot, piece by piece\!
+Let’s build a plot, piece by piece!
 
 ### Building a plot
 
 Visualizing the distribution of your data is one of the most fundamental
 methods of data exploration. We’ll learn the fundamentals of `ggplot2`
-while making a fundamental plot\!
+while making a fundamental plot!
 
-Every plot begins with a call to `ggplot()` (no **2**\! That’s only in
+Every plot begins with a call to `ggplot()` (no **2**! That’s only in
 the package name). First, we have to specify the data with the `data =`
 argument. In addition, we need to specify what variables we’re plotting
 and which axes we’re plotting them on. These are considered plot
 aesthetics and are specified within the `aes()` function.
 
-Let’s visualize the distribution of `valence`\! It is Spotify’s derived
+Let’s visualize the distribution of `valence`! It is Spotify’s derived
 metric that describes the “happiness” and “positivity” of a song. Since
 we’re visualizing a single variable, we only provide an aesthetic for
 the x axis.
 
-``` r
-ggplot(data = spotify, aes(x = valence))
-```
+    ggplot(data = spotify, aes(x = valence))
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 As you can see, we get a mostly blank plot when we run the `ggplot`
-function\! That’s because we haven’t told `ggplot` what type of `geom_`
+function! That’s because we haven’t told `ggplot` what type of `geom_`
 we want. `ggplot` sets the framework that the rest of the components
 inherit. Every plot component that follows will use `spotify` as the
 data set and `valence` as the x-axis data, unless otherwise specified.
 
 Let’s make something classic- a histogram. It’s easy- just specify the
-geom\!
+geom!
 
-``` r
-ggplot(data = spotify, aes(x = valence)) +
-  geom_histogram()
-```
+    ggplot(data = spotify, aes(x = valence)) +
+      geom_histogram()
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_bin).
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
@@ -488,22 +473,22 @@ that may be useful or obscure important patterns. We can play with the
 `binwidth` argument to adjust how wide each bin is in the units of our
 data. Let’s make them extra narrow. Notice how we specify the `binwidth`
 argument within the call to `geom_histogram`- that’s because it is an
-argument specific to this geom\!
+argument specific to this geom!
 
-``` r
-ggplot(data = spotify, aes(x = valence)) +
-  geom_histogram(binwidth = 0.01)
-```
+    ggplot(data = spotify, aes(x = valence)) +
+      geom_histogram(binwidth = 0.01)
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_bin).
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 I don’t think this uncovers patterns and just adds noise to the
 distribution. Let’s widen those binwidths.
 
-``` r
-ggplot(data = spotify, aes(x = valence)) +
-  geom_histogram(binwidth = 0.1)
-```
+    ggplot(data = spotify, aes(x = valence)) +
+      geom_histogram(binwidth = 0.1)
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_bin).
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
 
@@ -511,41 +496,41 @@ I like this a bit better- the distribution looks to be mostly normal
 with a bit of a right-skew. Most songs appear to be middle of the road
 in their positivity.
 
-I’m curious- minor keys tend to create a sad mood. Does this show up in
-the valence of the song? Let’s use our data isolation skillset to
-`filter` our data set for songs with a minor key and then visualize the
-valence of those songs. The variable that contains this information is
-the `mode` variable, where **0** indicates a minor key and **1**
-indicates a major key.
+I’m curious- the COVID pandemic has been extremely tough on the psyche
+of, I imagine, most people. Does this show up in our choice of pop
+music? Let’s use our data isolation skillset to see if music from a time
+period before the pandemic (a random week in March 2019) was happier
+than the long-term average. We need to `filter` our data set for
+pre-COVID songs and then visualize the valence of those songs. The
+variable that contains this information is the `covid_period` variable,
+where `pre_covid` indicates the pre-COVID time frame.
 
-``` r
-# first filter for minor key songs
-minor_songs <- filter(spotify, mode == 0)
+    # first filter for minor key songs
+    pre_covid <- filter(spotify, covid_period == "pre_covid")
 
-# now, visualize a histogram of the valence for these songs
-ggplot(data = minor_songs, aes(x = valence)) +
-  geom_histogram(binwidth = 0.1)
-```
+    # now, visualize a histogram of the valence for these songs
+    ggplot(data = pre_covid, aes(x = valence)) +
+      geom_histogram(binwidth = 0.1)
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-Interesting\! There seems to be a lump at the lower range of valence
-values. I think it would be cool to visualize the minor key distribution
-alongside the major key distribution. We’ll learn this in the next data
-visualization segment\!
+Interesting! There doesn’t seem to be a large change (if any). I think
+it would be cool to visualize the different periods of the COVID
+pandemic side-by-side to better visualize this difference. We’ll learn
+this in the next data visualization segment!
 
 While these plots aren’t too pretty, they get the message across. We
-will learn how to spruce up the plots in a bit\!
+will learn how to spruce up the plots in a bit!
 
 **Exercise 4**  
-Try to make your own ggplot\! Visualize a histogram of the `loudness`
+Try to make your own ggplot! Visualize a histogram of the `loudness`
 variable. Play around with the binwidths to get a feel of how this
-variable is distributed\! If you’re feeling a bit ambitious, see if you
-can filter the data by another variable (like `time_period` perhaps?)
+variable is distributed! If you’re feeling a bit ambitious, see if you
+can filter the data by another variable (like `covid_period` perhaps?)
 before you create the visualization to see if there is an interesting
 pattern not obvious in the full dataset.
 
------
+------------------------------------------------------------------------
 
 ### Go further
 
@@ -560,77 +545,72 @@ plots and annotating them,
 overlapping line plots that look like mountain ranges (or that one Joy
 Division album cover), and [ggtext](https://github.com/wilkelab/ggtext),
 which allows you to add Markdown and HTML formatted text to your
-ggplots. Super cool stuff\! The book doesn’t contain R code and isn’t a
+ggplots. Super cool stuff! The book doesn’t contain R code and isn’t a
 “this is how you make this plot in R” book, but that type of info is
 available in many other places, like [From data to
 viz](https://www.data-to-viz.com/).
 
------
+------------------------------------------------------------------------
 
-## Answers
+Answers
+-------
 
 **Exercise 1**
 
-``` r
-select(spotify, artist)
-select(spotify, artist, energy)
-```
+    select(spotify, artist)
+    select(spotify, artist, energy)
 
 **Exercise 2**
 
-``` r
-spotify %>% select(contains("n"))
-```
+    spotify %>% select(contains("n"))
 
-    ## # A tibble: 787 x 11
+    ## # A tibble: 10,500 x 14
     ##     rank danceability energy loudness speechiness acousticness instrumentalness
     ##    <dbl>        <dbl>  <dbl>    <dbl>       <dbl>        <dbl>            <dbl>
-    ##  1     1        0.427  0.407    -9.66      0.0382       0.612        0.386     
-    ##  2     2        0.717  0.653    -5.63      0.0658       0.229        0         
-    ##  3     3        0.572  0.385    -6.36      0.0308       0.371        0         
-    ##  4     4        0.793  0.399    -7.43      0.0951       0.12         0         
-    ##  5     5        0.826  0.513    -9.02      0.0349       0.327        0.0136    
-    ##  6     6        0.807  0.414    -8.90      0.0352       0.105        0.0000257 
-    ##  7     7        0.245  0.773    -5.98      0.0525       0.0665       0.00046   
-    ##  8     8        0.916  0.756    -7.65      0.188        0.0942       0         
-    ##  9     9        0.736  0.515    -7.74      0.163        0.384        0.00000431
-    ## 10    10        0.775  0.465   -10.8       0.0605       0.615        0.0000393 
-    ## # … with 777 more rows, and 4 more variables: liveness <dbl>, valence <dbl>,
-    ## #   duration_ms <dbl>, time_signature <dbl>
+    ##  1     1        0.778  0.317   -10.7       0.334       0.592         0         
+    ##  2     2        0.687  0.792    -2.75      0.0452      0.191         0         
+    ##  3     3        0.752  0.488    -7.05      0.0705      0.297         0.00000911
+    ##  4     4        0.76   0.479    -5.57      0.0466      0.556         0         
+    ##  5     5        0.834  0.73     -3.71      0.222       0.00513       0         
+    ##  6     6        0.579  0.904    -2.73      0.0618      0.193         0         
+    ##  7     7        0.717  0.653    -5.63      0.0658      0.229         0         
+    ##  8     8        0.837  0.364   -11.7       0.276       0.149         0         
+    ##  9     9        0.829  0.539    -7.36      0.208       0.136         0.00000178
+    ## 10    10        0.611  0.462    -7.05      0.0646      0.558         0.00000101
+    ## # … with 10,490 more rows, and 7 more variables: liveness <dbl>, valence <dbl>,
+    ## #   duration_ms <dbl>, time_signature <dbl>, month <chr>, season <chr>,
+    ## #   time_since_covid <dbl>
 
 **Exercise 3**
 
-``` r
-filter(spotify, time_period == "current")
-filter(spotify, tempo <= 80)
-filter(spotify, nchar(track) > 20)
-```
+    filter(spotify, covid_period == "post_covid")
+    filter(spotify, tempo <= 80)
+    filter(spotify, nchar(track) > 20)
 
 **Exercise 4**
 
-``` r
-ggplot(data = spotify, aes(x = loudness)) +
-  geom_histogram(binwidth = 1)
-```
+    ggplot(data = spotify, aes(x = loudness)) +
+      geom_histogram(binwidth = 1)
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_bin).
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
-I thought it would be cool to see if top 40 songs are louder\! I
-filtered for all songs with a rank equal to or below 40 before
-visualizing loudness. It looks to be the case\! This filter at least got
-rid of some of the quieter outliers. I took a look at the extra quiet
-song, and it looks like DaBaby’s song Baby on Baby wanted to keep it
-quiet for the babies.
+I thought it would be cool to see if top 40 songs are louder! I filtered
+for all songs with a rank equal to or below 40 before visualizing
+loudness. It looks to be the case! This filter at least got rid of some
+of the quieter outliers. I took a look at the extra quiet song, and it
+looks like DaBaby’s song Baby on Baby wanted to keep it quiet for the
+babies.
 
-``` r
-top40_songs <- filter(spotify, rank <= 40)
+    top40_songs <- filter(spotify, rank <= 40)
 
-ggplot(data = top40_songs, aes(x = loudness)) +
-  geom_histogram(binwidth = 1)
-```
+    ggplot(data = top40_songs, aes(x = loudness)) +
+      geom_histogram(binwidth = 1)
 
 ![](02_isolating-data_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
------
+------------------------------------------------------------------------
 
-[\<\<\< Previous](data-wrangling.md) | [Next \>\>\>](03_piping.md)
+[&lt;&lt;&lt; Previous](data-wrangling.md) \| [Next
+&gt;&gt;&gt;](03_piping.md)
