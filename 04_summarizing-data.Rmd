@@ -77,9 +77,9 @@ spotify %>%
   summarize(avg_energy = mean(energy))
 ```
 
-However, we had to isolate the genre from the rest of the data to calculate this number. You could imagine writing a program that goes through each genre one at a time and: 
+However, we had to isolate the season from the rest of the data to calculate this number. You could imagine writing a program that goes through each season one at a time and: 
 
-1. `filter`s out the rows with just that genre
+1. `filter`s out the rows with just that season
 2. applies `summarize` to the rows
 
 Eventually, the program could combine all of the results back into a single data set. However, you don't need to write such a program; this is the job of `dplyr`'s `group_by()` function.
@@ -124,13 +124,13 @@ spotify %>%
 The `mutate()` function is another highly useful tool for extracting unseen insights from your dataframe. While `select()` allows you to choose columns and `group_by()` allows you to summarize rows, `mutate()` enables you to create, modify, and delete columns. This is an extremely flexible function, so we'll only be able to demonstrate a small portion of its functionality here.  
 
 
-A very common use of `mutate()` is to change the type of a variable. For instance, `spotify` has a variable called `rank` that is currently defined as a double.  
+A very common use of `mutate()` is to change the type of a variable. For instance, `spotify` has a variable called `rank` that is currently classified as a number.  
 ```{r}
-typeof(spotify$rank)
+class(spotify$rank)
 ```
 
 
-Although the variable `rank` is a number, we consider it an ordered factor. The number 1 song is ahead of the number 2 song, which is ahead of the number 3 song, etc., so the order matters, but doing an operation like dividing all of the values by two doesn't make any sense. In practice, if we were to run a regression with `rank` as a double we would get a different answer than using `rank` as an ordered factor. So, let's use `mutate` to change `rank` from a double to an ordered factor. We'll name this new data frame `spotify_rank`.
+Although the variable `rank` is a number, we consider it an ordered factor. The number 1 song is ahead of the number 2 song, which is ahead of the number 3 song, etc., so the order matters, but doing an operation like dividing all of the values by two doesn't make any sense. In practice, if we were to run a regression with `rank` as a number we would get a different answer than using `rank` as an ordered factor. So, let's use `mutate` to change `rank` from a number to an ordered factor. We'll name this new data frame `spotify_rank`.
 ```{r}
 spotify_rank <- spotify %>% 
   mutate(rank = as.ordered(rank))
@@ -181,9 +181,10 @@ spotify %>%
   geom_point() +
   geom_smooth()
 ```
+
 This trend looks quadratic, so lets fit a quadratic curve to the data and see how that looks!  
 
-We're going to specify the `method` as "lm" to indicate that we want to fit a linear model. The formula tells it to use a quadratic fit instead of purely linear fit.
+We're going to specify the `method` as "lm" to indicate that we want to fit a linear model. The formula tells it to use a quadratic fit instead of purely linear fit.  
 ```{r}
 spotify %>% 
   ggplot(aes(x = loudness, y = energy)) +
@@ -204,7 +205,7 @@ spotify %>%
 
 Prior to plotting, we should summarize the data by week to "de-noise" the trends. That way we can see clear week-by-week trends. 
 
-This is a large chunk of code, but it should look familiar to you. Here, we are using `group_by`, `summarize`, and `mutate` to create a new data frame that summarizes the variables by week. For all continuous variables we take their median. It's often desirable to summarize a factor by its proportion from the total, so I summarized the `mode` variable by first counting the major and minor songs per week, then taking the proportion of minor songs relative to the total number of songs per week. 
+This is a large chunk of code, but it should look familiar to you. Here, we are using `group_by`, `summarize`, and `mutate` to create a new data frame that summarizes the variables by week. For all continuous variables we take their median. It's often desirable to summarize a factor by its proportion from the total, so I summarized the `mode` variable by first counting the major and minor songs per week, then taking the proportion of minor songs relative to the total number of songs per week.  
 ```{r}
 spotify_sum <- spotify %>% 
   group_by(week) %>% 
@@ -240,7 +241,7 @@ spotify_sum %>%
   geom_line()
 ```
 
-We can investigate that using color! Let's color the line according to the COVID period the week was in. This looks to be the case!
+We can investigate that using color! Let's color the line according to the COVID period the week was in. This looks to be the case!  
 ```{r}
 spotify_sum %>% 
   ggplot(aes(x = week, y = loudness, color = covid_period)) +

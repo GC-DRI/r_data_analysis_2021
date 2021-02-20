@@ -93,11 +93,11 @@ spotify %>%
     ##        <dbl>
     ## 1      0.618
 
-However, we had to isolate the genre from the rest of the data to
+However, we had to isolate the season from the rest of the data to
 calculate this number. You could imagine writing a program that goes
-through each genre one at a time and:
+through each season one at a time and:
 
-1.  `filter`s out the rows with just that genre
+1.  `filter`s out the rows with just that season
 2.  applies `summarize` to the rows
 
 Eventually, the program could combine all of the results back into a
@@ -168,21 +168,21 @@ of its functionality here.
 
 A very common use of `mutate()` is to change the type of a variable. For
 instance, `spotify` has a variable called `rank` that is currently
-defined as a double.
+classified as a number.
 
 ``` r
-typeof(spotify$rank)
+class(spotify$rank)
 ```
 
-    ## [1] "double"
+    ## [1] "numeric"
 
 Although the variable `rank` is a number, we consider it an ordered
 factor. The number 1 song is ahead of the number 2 song, which is ahead
 of the number 3 song, etc., so the order matters, but doing an operation
 like dividing all of the values by two doesn’t make any sense. In
-practice, if we were to run a regression with `rank` as a double we
+practice, if we were to run a regression with `rank` as a number we
 would get a different answer than using `rank` as an ordered factor. So,
-let’s use `mutate` to change `rank` from a double to an ordered factor.
+let’s use `mutate` to change `rank` from a number to an ordered factor.
 We’ll name this new data frame `spotify_rank`.
 
 ``` r
@@ -273,6 +273,7 @@ spotify %>%
     ## `geom_smooth()` using method = 'gam' and formula 'y ~ s(x, bs = "cs")'
 
 ![](04_summarizing-data_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
 This trend looks quadratic, so lets fit a quadratic curve to the data
 and see how that looks\!
 
