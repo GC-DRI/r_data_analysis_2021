@@ -56,7 +56,7 @@ spotify %>%
   select(loudness, energy)
 ```
 
-As you read the code, pronounce `%>%` as "then". You'll notice that `dplyr` makes it easy to read pipes. Each function name is a verb, so our code resembles the statement, "Take spotify, _then_ filter it by mode, _then_ select the loudness and energy."
+As you read the code, pronounce `%>%` as "then". You'll notice that `dplyr` makes it easy to read pipes. Each function name is a verb, so our code resembles the statement, "Take spotify, _then_ filter it by covid_period, _then_ select the loudness and energy."
 
 `dplyr` also makes it easy to write pipes. Each `dplyr` function returns a data frame that can be piped into another `dplyr` function, which will accept the data frame as its first argument. In fact, `dplyr` functions are written with pipes in mind: each function does one simple task. `dplyr` expects you to use pipes to combine these simple tasks to produce sophisticated results.
 

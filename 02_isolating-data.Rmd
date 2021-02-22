@@ -199,14 +199,14 @@ If you provide more than one test to `filter()`, `filter()` will combine the tes
 
 For instance,
 ```{r, eval=FALSE}
-filter(spotify, mode == 0, tempo > 80)
+filter(spotify, mode == "minor", tempo > 80)
 ```
 
 will only return songs that are in a minor key **and** are faster than 80 beats per minute. Run this code and see how many observations are returned.
 
 Now, try this.
 ```{r, eval=FALSE}
-filter(spotify, mode == 0 | tempo > 80)
+filter(spotify, mode == "minor" | tempo > 80)
 ```
 
 Many more observations are returned because the function is filtering for songs that are in a minor key **or** have a tempo greater than 80 beats per minute. A song only has to satisfy one of the criteria to pass the filter.

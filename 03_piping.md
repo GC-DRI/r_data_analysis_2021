@@ -1,13 +1,12 @@
 Piping
 ================
 
-[&lt;&lt;&lt; Previous](02_isolating-data.md) \| [Next
-&gt;&gt;&gt;](04_summarizing-data.md)
+[\<\<\< Previous](02_isolating-data.md) | [Next
+\>\>\>](04_summarizing-data.md)
 
-------------------------------------------------------------------------
+-----
 
-%&gt;%
-------
+## %\>%
 
 ### Steps
 
@@ -18,11 +17,13 @@ step fashion. For example, you could:
 1.  Filter `spotify` to just songs from before the COVID pandemic, then
 2.  Select the `loudness` and `energy` columns from the result
 
-<!-- -->
+<!-- end list -->
 
-    pre_covid <- filter(spotify, covid_period == "pre_covid")
-    pre_covid <- select(pre_covid, loudness, energy)
-    pre_covid
+``` r
+pre_covid <- filter(spotify, covid_period == "pre_covid")
+pre_covid <- select(pre_covid, loudness, energy)
+pre_covid
+```
 
     ## # A tibble: 4,900 x 2
     ##    loudness energy
@@ -48,12 +49,14 @@ R code.
 You could avoid creating `pre_covid` by nesting your functions inside of
 each other, but this creates code that is hard to read:
 
-    select(filter(spotify, covid_period == "pre_covid"), loudness, energy)
+``` r
+select(filter(spotify, covid_period == "pre_covid"), loudness, energy)
+```
 
 The dplyr package provides a third way to write sequences of functions:
 the pipe.
 
-### %&gt;%
+### %\>%
 
 ![Source: dplyr cheatsheet](images/pipes.png)
 
@@ -64,9 +67,11 @@ code punctuation makes it easy to write and read series of functions
 that are applied in a step by step way. For example, we can use the pipe
 to rewrite our code above:
 
-    spotify %>% 
-      filter(covid_period == "pre_covid") %>% 
-      select(loudness, energy)
+``` r
+spotify %>% 
+  filter(covid_period == "pre_covid") %>% 
+  select(loudness, energy)
+```
 
     ## # A tibble: 4,900 x 2
     ##    loudness energy
@@ -86,7 +91,7 @@ to rewrite our code above:
 As you read the code, pronounce `%>%` as “then”. You’ll notice that
 `dplyr` makes it easy to read pipes. Each function name is a verb, so
 our code resembles the statement, “Take spotify, *then* filter it by
-mode, *then* select the loudness and energy.”
+covid\_period, *then* select the loudness and energy.”
 
 `dplyr` also makes it easy to write pipes. Each `dplyr` function returns
 a data frame that can be piped into another `dplyr` function, which will
@@ -104,10 +109,9 @@ little by writing a new pipe. The pipe should:
     `danceability`
 2.  Select the `tempo` and `energy` columns
 
-------------------------------------------------------------------------
+-----
 
-Using Color
------------
+## Using Color
 
 Color and shapes do more than make your plot look nicer. They add a
 third dimension to your plot that can highlight groups, emphasize higher
@@ -138,9 +142,11 @@ split a histogram into two colors, one for the pre-COVID time period,
 and one for the post-COVID time period, we specify the `covid_period`
 variable for the `fill` argument.
 
-    spotify %>%
-      ggplot(aes(x = valence, fill = covid_period)) +
-      geom_histogram(binwidth = 0.1)
+``` r
+spotify %>%
+  ggplot(aes(x = valence, fill = covid_period)) +
+  geom_histogram(binwidth = 0.1)
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
@@ -152,54 +158,60 @@ relative shapes of two distributions. To visualize the differences
 between the pre-COVID and post-COVID time periods, we specify the
 `color` variable.
 
-    spotify %>%
-      ggplot(aes(x = valence, color = covid_period)) +
-      geom_density()
+``` r
+spotify %>%
+  ggplot(aes(x = valence, color = covid_period)) +
+  geom_density()
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Man, it looks like the American public consistently likes to listen to
-moderately positive music! There is a bit of a jump at the lower range
+moderately positive music\! There is a bit of a jump at the lower range
 of valence values for the post\_COVID time frame, but I’m hesitant to
 over-interpret that result.
 
 Let’s spruce the plot up a bit by adding a plot title, capitalizing the
 axis title names, and customizing the legend title. To do this, we use
-the `labs()` function! The arguments are mostly self-explanatory, except
-for the legend. To change the title of a legend, you specify the
+the `labs()` function\! The arguments are mostly self-explanatory,
+except for the legend. To change the title of a legend, you specify the
 aesthetic the legend is referring to, in this case the `color`
 aesthetic.
 
-    spotify %>%
-      ggplot(aes(x = valence, color = covid_period)) +
-      geom_density() +
-      labs(
-        title = "No trend in valence before and after the COVID pandemic",
-        x = "Valence",
-        y = "Density",
-        color = "COVID period"
-      )
+``` r
+spotify %>%
+  ggplot(aes(x = valence, color = covid_period)) +
+  geom_density() +
+  labs(
+    title = "No trend in valence before and after the COVID pandemic",
+    x = "Valence",
+    y = "Density",
+    color = "COVID period"
+  )
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 For fun, let’s update the color to something more visually appealing.
 `ggplot2` is notorious for its ugly default color scheme. In our case,
 let’s use the *viridis* color scheme. It’s functional and visually
-appealing, and fortunately comes with its own function! We will use the
+appealing, and fortunately comes with its own function\! We will use the
 `scale_color_viridis_d()` function to specify that we want to *scale*
 the *color* aesthetic using the *viridis* color palette, and the
 variable we are mapping to is *d*iscrete.
 
-    spotify %>%
-      ggplot(aes(x = valence, color = covid_period)) +
-      geom_density() +
-      labs(
-        title = "No trend in valence before and after the COVID pandemic",
-        x = "Valence",
-        y = "Density",
-        color = "COVID period"
-      ) +
-      scale_color_viridis_d()
+``` r
+spotify %>%
+  ggplot(aes(x = valence, color = covid_period)) +
+  geom_density() +
+  labs(
+    title = "No trend in valence before and after the COVID pandemic",
+    x = "Valence",
+    y = "Density",
+    color = "COVID period"
+  ) +
+  scale_color_viridis_d()
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
 
@@ -212,7 +224,7 @@ discrete variable, or `scale_fill_viridis_c()` for a continuous
 variable. There are a TON of `scale_*` functions, and fortunately a kind
 soul recently provided a comprehensive and clear [guide to all of
 them](https://ggplot2tor.com/scales/). They even made it easy to choose
-which function you need, given what you want to change!
+which function you need, given what you want to change\!
 
 **Exercise 2**  
 Make a density plot of the `loudness` variable and color it according to
@@ -220,40 +232,41 @@ the `covid_period` variable. Change the x-axis and y-axis labels so
 their first letters are upper case and change the legend to read “COVID
 period”. Finally, use one of the `scale_*_viridis_*()` functions to use
 the viridis color palette instead of `ggplot2`’s default. Add a title
-describing the plot if you want! What trend (if any) do you see?  
+describing the plot if you want\! What trend (if any) do you see?  
 *Extension:* if you’re feeling ambitious, try out one of the other
 `scale_*` functions to color your plot.
 
-------------------------------------------------------------------------
+-----
 
 ### Go further
 
-There are some fun color palettes out there! Check out these palettes to
-up your plotting game:
+There are some fun color palettes out there\! Check out these palettes
+to up your plotting game:
 
--   [ggpomological](https://www.garrickadenbuie.com/project/ggpomological/)
+  - [ggpomological](https://www.garrickadenbuie.com/project/ggpomological/)
     for fruit themed colors  
--   [wesanderson](https://github.com/karthik/wesanderson) for colors
+  - [wesanderson](https://github.com/karthik/wesanderson) for colors
     derived from Wes Anderson movies  
--   [ggsci](https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html)
+  - [ggsci](https://cran.r-project.org/web/packages/ggsci/vignettes/ggsci.html)
     for color palettes inspired by colors used in scientific journals,
     data visualization libraries, science fiction movies, and TV shows
 
 In addition, it’s important to make your color choices accessible to
 those with vision impairments. To see how your color palette is viewed
 under a range of color blindness syndromes, try out your plots with the
-[colorblindr](https://github.com/clauswilke/colorblindr) package!
+[colorblindr](https://github.com/clauswilke/colorblindr) package\!
 
-------------------------------------------------------------------------
+-----
 
-Answers
--------
+## Answers
 
 **Exercise 1**
 
-    spotify %>% 
-      filter(danceability > 0.50) %>% 
-      select(tempo, energy) 
+``` r
+spotify %>% 
+  filter(danceability > 0.50) %>% 
+  select(tempo, energy) 
+```
 
     ## # A tibble: 9,475 x 2
     ##    tempo energy
@@ -272,35 +285,39 @@ Answers
 
 **Exercise 2**
 
-    spotify %>%
-      ggplot(aes(x = loudness, color = covid_period)) +
-      geom_density() +
-      labs(
-        title = "Slight decrease in loudness after the pandemic began",
-        x = "Loudness",
-        y = "Density",
-        color = "COVID period"
-      ) +
-      scale_color_viridis_d()
+``` r
+spotify %>%
+  ggplot(aes(x = loudness, color = covid_period)) +
+  geom_density() +
+  labs(
+    title = "Slight decrease in loudness after the pandemic began",
+    x = "Loudness",
+    y = "Density",
+    color = "COVID period"
+  ) +
+  scale_color_viridis_d()
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
-Now I’ll try it with one of the `scale_color_brewer()` palettes!
+Now I’ll try it with one of the `scale_color_brewer()` palettes\!
 
-    spotify %>%
-      ggplot(aes(x = loudness, color = covid_period)) +
-      geom_density() +
-      labs(
-        title = "Slight decrease in loudness after the pandemic began",
-        x = "Loudness",
-        y = "Density",
-        color = "COVID period"
-      ) +
-      scale_color_brewer(palette = "Dark2")
+``` r
+spotify %>%
+  ggplot(aes(x = loudness, color = covid_period)) +
+  geom_density() +
+  labs(
+    title = "Slight decrease in loudness after the pandemic began",
+    x = "Loudness",
+    y = "Density",
+    color = "COVID period"
+  ) +
+  scale_color_brewer(palette = "Dark2")
+```
 
 ![](03_piping_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
-------------------------------------------------------------------------
+-----
 
-[&lt;&lt;&lt; Previous](02_isolating-data.md) \| [Next
-&gt;&gt;&gt;](04_summarizing-data.md)
+[\<\<\< Previous](02_isolating-data.md) | [Next
+\>\>\>](04_summarizing-data.md)
